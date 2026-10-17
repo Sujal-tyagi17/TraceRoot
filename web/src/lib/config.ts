@@ -17,3 +17,6 @@ export const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.c
 
 export const txLink = (h: string) => `${explorerUrl}/tx/${h}`;
 export const addrLink = (a: string) => `${explorerUrl}/address/${a}`;
+
+/** Plain-language description of the network, for badges and hints. */
+export const networkLabel = chainKey === "localhost" ? "a local test chain" : `${chain.name}, a public test network`;

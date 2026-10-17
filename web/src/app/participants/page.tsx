@@ -2,7 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useBatches } from "@/lib/hooks";
 import { rolesOf, ROLE_LABEL } from "@/lib/traceroot";
-import { addrLink, isConfigured } from "@/lib/config";
+import { isConfigured } from "@/lib/config";
+import { ExplorerLink } from "@/components/ExplorerLink";
 import { short } from "@/lib/format";
 import { Card, Empty, NotConfigured, PageHeader, Pill, Spinner } from "@/components/ui";
 
@@ -22,7 +23,7 @@ export default function Participants() {
             const held = (data ?? []).filter((b) => b.custodian === a && b.status === "Active").length;
             return (
               <Card key={a} className="p-4">
-                <a href={addrLink(a)} target="_blank" rel="noreferrer" className="font-mono text-sm text-forest underline">{short(a, 6)}</a>
+                <ExplorerLink kind="address" value={a} className="font-mono text-sm text-forest underline">{short(a, 6)}</ExplorerLink>
                 <div className="mt-2 flex flex-wrap gap-1">{r.length ? r.map((x) => <Pill key={x} tone="good">{ROLE_LABEL[x]}</Pill>) : <Pill>Role revoked</Pill>}</div>
                 <p className="mt-2 text-xs text-slate-600">{held} active batch{held === 1 ? "" : "es"} in custody</p>
               </Card>

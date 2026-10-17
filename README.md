@@ -14,9 +14,9 @@ TraceRoot is a blockchain supply chain provenance platform. It records every bat
 
 ![TraceRoot home page](docs/screenshots/home.png)
 
-| Recall flowing through every branch | Batch page on a phone |
-|---|---|
-| ![Recall demo](docs/screenshots/recall-demo.png) | ![Mobile batch page](docs/screenshots/mobile.png) |
+| The Origin Sequence (opening animation) | Recall demo on the landing page | Batch page on a phone |
+|---|---|---|
+| ![Origin Sequence](docs/screenshots/origin-sequence.png) | ![Recall demo](docs/screenshots/recall-demo.png) | ![Mobile batch page](docs/screenshots/mobile.png) |
 
 ## What the contract guarantees
 
@@ -83,9 +83,12 @@ The deploy script refuses to run on any chain except Amoy, Sepolia and local Har
 
 | Command | What it does |
 |---|---|
-| `npm test` | 30 unit tests: roles, handoffs, expiry, split/merge conservation, recalls, lineage cap, event index |
-| `npm run coverage` | ≈99% line coverage |
-| `npm run slither` | Static analysis; see `docs/SECURITY.md` for triage |
+| `web: npm run lint` | ESLint (Next.js core web vitals + TypeScript rules) |
+| `web: npm test` | 12 unit tests: example network lineage, role permissions, form parsers, error classification |
+| `web: npm run test:e2e` | 18 Playwright browser tests against a seeded local chain (see `web/tests/e2e/README.md`) |
+| `contracts: npm test` | 30 contract tests: roles, handoffs, expiry, split/merge conservation, recalls, lineage cap, event index |
+| `contracts: npm run coverage` | ≈99% line coverage |
+| `contracts: npm run slither` | Static analysis; see `docs/SECURITY.md` for triage |
 
 The test suite includes a randomized split/merge invariant test showing total active quantity never changes. This is automated testing, not a formal audit.
 

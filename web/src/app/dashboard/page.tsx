@@ -35,7 +35,7 @@ export default function Overview() {
         {stats.map(([l, v]) => (
           <Card key={l} className="p-5">
             <p className="text-sm text-slate-600">{l}</p>
-            <p className={`mt-2 font-display text-4xl font-[750] tracking-tight ${l.startsWith("Recalls") && v ? "text-alert" : "text-forest"}`}>{v}</p>
+            <p className={`mt-2 font-display text-4xl font-[750] tracking-tight ${l.startsWith("Recalls") && v ? "text-alert" : "text-forest"}`}><CountUp value={v} /></p>
           </Card>
         ))}
       </div>

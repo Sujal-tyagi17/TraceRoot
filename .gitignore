@@ -18,3 +18,5 @@ web/tsconfig.tsbuildinfo
 web/src/lib/contract/deployment.hardhat.json
 web/src/lib/contract/deployment.localhost.json
 .DS_Store
+web/e2e-results/
+web/playwright-report/

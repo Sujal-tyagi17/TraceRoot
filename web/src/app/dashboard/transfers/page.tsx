@@ -4,6 +4,7 @@ import { useBatches } from "@/lib/hooks";
 import { useDash } from "@/components/DashCtx";
 import { Action, parseAddr, parseId } from "@/components/Action";
 import { Empty, Field, inputCls } from "@/components/ui";
+import { BatchCheck, Check, canAct, rolesText, useBatchLookup, useRolesLookup } from "@/components/FormChecks";
 import { dateTime, inr, short, toPaise } from "@/lib/format";
 
 export default function Transfers() {
@@ -11,6 +12,8 @@ export default function Transfers() {
   const { data } = useBatches(200);
   const [p, setP] = useState({ id: "", to: "", price: "" });
   const [cond, setCond] = useState({ id: "", t: "", h: "", note: "" });
+  const look = useBatchLookup(p.id);
+  const rec = useRolesLookup(p.to);
   const me = address?.toLowerCase();
   const outgoing = (data ?? []).filter((b) => b.pending && b.custodian.toLowerCase() === me);
   const incoming = (data ?? []).filter((b) => b.pending?.to.toLowerCase() === me);
@@ -18,8 +21,18 @@ export default function Transfers() {
   return (
     <div className="stagger grid gap-5 lg:grid-cols-2">
       <div className="space-y-5">
-        <Action title="Offer a handoff" desc="Step 1 of 2. Custody only moves when the recipient accepts (offers expire after 7 days)."
-          fn="proposeTransfer" cta="Send offer" build={() => [parseId(p.id), parseAddr(p.to), toPaise(p.price || "0")]}>
+        <Action title="Offer a handoff" desc="Step 1 of 2. Custody moves only when the recipient accepts. Offers expire after 7 days."
+          fn="proposeTransfer" cta="Send offer" build={() => [parseId(p.id), parseAddr(p.to), toPaise(p.price || "0")]}
+          disabled={!look.batch || canAct(look.batch, address) !== true || !rec.valid || (!!rec.roles && rec.roles.filter((r) => r !== "ADMIN").length === 0) || rec.roles === undefined || p.to.trim().toLowerCase() === address?.toLowerCase() || (!!p.price && !/^\d+(\.\d{1,2})?$/.test(p.price))}
+          footer={<div className="space-y-1">
+            <BatchCheck raw={p.id} me={address} look={look} />
+            {p.to.trim() && (!rec.valid ? <Check ok={false}>That isn&apos;t a valid wallet address. It should start with 0x and have 40 more characters.</Check>
+              : p.to.trim().toLowerCase() === address?.toLowerCase() ? <Check ok={false}>You can&apos;t hand a batch to yourself.</Check>
+              : rec.loading ? <Check ok={null}>Checking the recipient&apos;s role…</Check>
+              : rec.roles && rec.roles.filter((r) => r !== "ADMIN").length ? <Check ok>Recipient holds: {rolesText(rec.roles)}.</Check>
+              : <Check ok={false}>This wallet has no TraceRoot role yet, so the contract would reject it. Ask the administrator to grant one.</Check>)}
+            {p.price && !/^\d+(\.\d{1,2})?$/.test(p.price) && <Check ok={false}>Enter a price in rupees, like 16000 or 16000.50.</Check>}
+          </div>}>
           <div className="grid grid-cols-[110px_1fr] gap-3">
             <Field label="Batch #"><input className={inputCls} value={p.id} onChange={(e) => setP({ ...p, id: e.target.value })} /></Field>
             <Field label="Declared price (₹)" hint="Optional, whole batch"><input className={inputCls} inputMode="decimal" value={p.price} onChange={(e) => setP({ ...p, price: e.target.value })} /></Field>

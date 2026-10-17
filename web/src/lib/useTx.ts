@@ -10,7 +10,9 @@ export type TxState =
   | { phase: "signing" }
   | { phase: "pending"; hash: Hex }
   | { phase: "confirmed"; hash: Hex }
-  | { phase: "error"; message: string; hash?: Hex };
+  | { phase: "error"; kind: ErrorKind; message: string; hash?: Hex };
+
+export type ErrorKind = "rejected" | "reverted" | "network" | "setup";
 
 const FRIENDLY: Record<string, string> = {
   NotCustodian: "You are not the current custodian of this batch.",
@@ -39,6 +41,15 @@ const FRIENDLY: Record<string, string> = {
   EnforcedPause: "The contract is paused by the administrator.",
 };
 
+export function classify(e: unknown): ErrorKind {
+  const msg = e instanceof Error ? e.message : String(e);
+  if (/User (rejected|denied)|rejected the request/i.test(msg)) return "rejected";
+  if (e instanceof BaseError && e.walk((x) => x instanceof ContractFunctionRevertedError)) return "reverted";
+  if (/revert/i.test(msg)) return "reverted";
+  if (/fetch|network|timeout|HTTP request failed|ECONN|rate limit/i.test(msg)) return "network";
+  return "reverted";
+}
+
 export function explain(e: unknown): string {
   if (e instanceof BaseError) {
     const revert = e.walk((x) => x instanceof ContractFunctionRevertedError);
@@ -47,7 +58,8 @@ export function explain(e: unknown): string {
       if (name && FRIENDLY[name]) return FRIENDLY[name];
       if (name) return `Contract rejected the action: ${name}`;
     }
-    if (/User (rejected|denied)/i.test(e.message)) return "You rejected the transaction in your wallet.";
+    if (/User (rejected|denied)/i.test(e.message)) return "Nothing was sent. You can try again whenever you're ready.";
+    if (/fetch|network|timeout|HTTP request failed/i.test(e.message)) return "Couldn't reach the blockchain. Check your connection, then try again.";
     if (/insufficient funds/i.test(e.message)) return `Not enough test ${chain.nativeCurrency.symbol} for gas. Use a faucet.`;
     return e.shortMessage;
   }
@@ -61,9 +73,9 @@ export function useTx(onConfirmed?: () => void) {
   const [state, setState] = useState<TxState>({ phase: "idle" });
 
   async function send(functionName: string, args: unknown[]) {
-    if (!contractAddress) return setState({ phase: "error", message: "Contract not configured." });
-    if (!address) return setState({ phase: "error", message: "Connect your wallet first." });
-    if (chainId !== chain.id) return setState({ phase: "error", message: `Switch your wallet to ${chain.name}.` });
+    if (!contractAddress) return setState({ phase: "error", kind: "setup", message: "This site isn't connected to a contract yet." });
+    if (!address) return setState({ phase: "error", kind: "setup", message: "Connect your wallet first." });
+    if (chainId !== chain.id) return setState({ phase: "error", kind: "setup", message: `Switch your wallet to ${chain.name}, then try again.` });
     let hash: Hex | undefined;
     try {
       setState({ phase: "signing" });
@@ -71,11 +83,11 @@ export function useTx(onConfirmed?: () => void) {
       hash = await writeContractAsync(request as never);
       setState({ phase: "pending", hash });
       const rc = await publicClient.waitForTransactionReceipt({ hash });
-      if (rc.status !== "success") throw new Error("Transaction reverted on-chain.");
+      if (rc.status !== "success") throw new Error("The transaction reverted on-chain.");
       setState({ phase: "confirmed", hash });
       onConfirmed?.();
     } catch (e) {
-      setState({ phase: "error", message: explain(e), hash });
+      setState({ phase: "error", kind: classify(e), message: explain(e), hash });
     }
   }
   return { state, send, reset: () => setState({ phase: "idle" }) };

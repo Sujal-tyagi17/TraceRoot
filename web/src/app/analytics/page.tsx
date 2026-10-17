@@ -103,12 +103,12 @@ export default function Analytics() {
   return (
     <div>
       <PageHeader eyebrow="Analytics" title="Supply chain analytics">
-        Computed in your browser from on-chain state and events. Prices are participant declarations.
+        Worked out in your browser from on-chain records. Nothing here is estimated or invented.
       </PageHeader>
       {all.length === 0 ? <Empty title="No batches yet — analytics appear once activity starts" /> : (
         <div className="stagger grid gap-5 md:grid-cols-2">
-          <Card><p className="mb-1 font-medium text-forest">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /></Card>
-          <Card><p className="mb-1 font-medium text-forest">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /></Card>
+          <Card><p className="mb-1 font-medium text-forest">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /><p className="mt-3 text-xs text-slate-400">Source: the current state of every batch in the contract.</p></Card>
+          <Card><p className="mb-1 font-medium text-forest">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /><p className="mt-3 text-xs text-slate-400">Source: quantities producers registered when creating each batch.</p></Card>
           <Card className="md:col-span-2">
             <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
               <div>
@@ -125,7 +125,8 @@ export default function Analytics() {
               )}
             </div>
             {prices.isLoading ? <Spinner label="Reading handoff events…" /> : product ? <Chart data={stageRows(prices.data!.points, product)} x="stage" y="perUnit" fmt={(v) => inr(v)} /> :
-              <Empty title="No priced handoffs yet" />}
+              <Empty title="No priced handoffs yet">Prices appear here once participants declare them on handoffs or sales.</Empty>}
+            <p className="mt-3 text-xs text-slate-400">Source: prices declared in handoff and sale events. Transit time is measured from each offer to its acceptance.</p>
           </Card>
         </div>
       )}

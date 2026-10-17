@@ -4,7 +4,8 @@ import { use } from "react";
 import { AlertOctagon, ArrowRightLeft, CalendarDays, MapPin, Package, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAncestors, useBatch, useChildren, useHistory } from "@/lib/hooks";
-import { addrLink, isConfigured } from "@/lib/config";
+import { isConfigured } from "@/lib/config";
+import { ExplorerLink } from "@/components/ExplorerLink";
 import { date, inr, short } from "@/lib/format";
 import { Card, Empty, ErrorBox, NotConfigured, Spinner, StatusPill } from "@/components/ui";
 
@@ -19,6 +20,7 @@ function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: R
 import { Timeline } from "@/components/Timeline";
 import { Qr } from "@/components/Qr";
 import { BatchSkeleton } from "@/components/Loader";
+import { BatchRecords } from "@/components/BatchRecords";
 
 const chip = (recalled: boolean) =>
   `rounded-lg border px-2.5 py-1 font-mono ${recalled ? "border-alert/40 bg-alert-soft text-alert" : "border-paper-300 bg-paper"}`;
@@ -71,9 +73,9 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
             <Fact icon={<MapPin size={15} />} label="Origin" value={b.origin} />
             <Fact icon={<CalendarDays size={15} />} label="Produced" value={date(b.producedAt)} />
             <Fact icon={<User size={15} />} label={merged ? "Merged by" : "Original producer"}
-              value={<a href={addrLink(b.producer)} target="_blank" rel="noreferrer" className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.producer, 5)}</a>} />
+              value={<ExplorerLink kind="address" value={b.producer} className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.producer, 5)}</ExplorerLink>} />
             <Fact icon={<User size={15} />} label="Held by"
-              value={<a href={addrLink(b.custodian)} target="_blank" rel="noreferrer" className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.custodian, 5)}</a>} />
+              value={<ExplorerLink kind="address" value={b.custodian} className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.custodian, 5)}</ExplorerLink>} />
             {b.pending && <Fact icon={<ArrowRightLeft size={15} />} label="Waiting for" value={<span className="text-amber">{short(b.pending.to)} to accept{b.pending.price > 0n && `, ${inr(b.pending.price)}`}</span>} />}
           </dl>
         </div>
@@ -111,6 +113,8 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
           {b.parents.length > 0 && <p className="mt-3 text-xs text-slate-400">Earlier handoffs happened on ancestor batches — open them to see the full journey from origin.</p>}
         </Card>
       )}
+
+      {hist.data && <BatchRecords events={hist.data} unit={b.unit} quantity={b.quantity} />}
 
       <section>
         <h2 className="mb-6 font-display text-3xl font-[750] tracking-[-0.03em] text-forest">Journey</h2>

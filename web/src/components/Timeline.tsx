@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRightLeft, CheckCheck, CircleSlash, FilePlus2, GitMerge, Leaf, Paperclip, ShieldCheck, ShoppingBag, Siren, Split, Thermometer, Undo2 } from "lucide-react";
+import { ArrowRightLeft, CheckCheck, CircleSlash, GitMerge, Leaf, Paperclip, ShieldCheck, ShoppingBag, Siren, Split, Thermometer, Undo2 } from "lucide-react";
 import type { TimelineEvent } from "@/lib/traceroot";
 import { GRADE_LABEL, dateTime, inr, short } from "@/lib/format";
 import { TxLink } from "./ui";
@@ -12,6 +12,7 @@ const ICON = {
 const ipfs = (cid: string) => `https://ipfs.io/ipfs/${cid}`;
 
 function describe(e: TimelineEvent, self: bigint) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- decoded event args are untyped at the ABI boundary
   const d = e.data as Record<string, any>;
   switch (e.kind) {
     case "created": return { t: "Batch created at origin", s: `${d.quantity} ${d.unit} of ${d.product}, ${d.origin}`, cid: d.evidenceCid };

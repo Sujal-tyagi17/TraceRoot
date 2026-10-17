@@ -3,7 +3,8 @@ import Link from "next/link";
 import { AlertTriangle, CheckCircle2, ExternalLink, PlugZap } from "lucide-react";
 import type { ReactNode } from "react";
 import type { TxState } from "@/lib/useTx";
-import { txLink } from "@/lib/config";
+import { explorerUrl } from "@/lib/config";
+import { ExplorerLink } from "./ExplorerLink";
 import type { Batch } from "@/lib/traceroot";
 import { RootLoader } from "./Loader";
 
@@ -93,21 +94,30 @@ export function NotConfigured() {
   );
 }
 
+const ERROR_TITLE = { rejected: "You cancelled it in your wallet", reverted: "The contract rejected it", network: "Network problem", setup: "Not ready yet" } as const;
+
+/** Truthful transaction feedback. Success appears only after the receipt confirms it. */
 export function TxStatus({ state }: { state: TxState }) {
   if (state.phase === "idle") return null;
-  if (state.phase === "signing") return <p className="flex items-center gap-2 text-sm text-slate-600"><RootLoader size={18} label="Waiting for wallet" /> Approve it in your wallet…</p>;
-  if (state.phase === "pending")
-    return <p className="flex items-center gap-2 text-sm text-amber"><RootLoader size={18} label="Confirming" /> Confirming on the blockchain… <TxLink hash={state.hash} /></p>;
-  if (state.phase === "confirmed")
-    return <p className="flex items-center gap-2 text-sm text-forest-500"><CheckCircle2 size={14} /> Confirmed on-chain. <TxLink hash={state.hash} /></p>;
-  return <div className="space-y-1"><ErrorBox message={state.message} />{state.hash && <TxLink hash={state.hash} />}</div>;
+  let body: ReactNode;
+  if (state.phase === "signing") body = <p className="flex items-center gap-2 text-sm text-slate-600"><RootLoader size={18} label="Waiting for wallet" /> Approve it in your wallet…</p>;
+  else if (state.phase === "pending")
+    body = <p className="flex flex-wrap items-center gap-2 text-sm text-amber"><RootLoader size={18} label="Confirming" /> Submitted. Confirming on the blockchain… <TxLink hash={state.hash} /></p>;
+  else if (state.phase === "confirmed")
+    body = <p className="confirm-pop flex flex-wrap items-center gap-2 rounded-full bg-lime px-3 py-1 text-sm font-medium text-forest"><CheckCircle2 size={15} /> Confirmed on-chain <TxLink hash={state.hash} /></p>;
+  else body = (
+    <div className={`rounded-xl px-4 py-3 text-sm ${state.kind === "rejected" || state.kind === "setup" ? "bg-paper-200 text-slate" : "bg-alert-soft text-alert"}`}>
+      <p className="font-semibold">{ERROR_TITLE[state.kind]}</p>
+      <p className="mt-0.5">{state.message}</p>
+      {state.hash && <p className="mt-1"><TxLink hash={state.hash} /></p>}
+    </div>
+  );
+  return <div role="status" aria-live="polite" className="w-full sm:w-auto">{body}</div>;
 }
 
 export function TxLink({ hash }: { hash: string }) {
   return (
-    <a href={txLink(hash)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs underline">
-      {hash.slice(0, 10)}… <ExternalLink size={11} />
-    </a>
+    <ExplorerLink kind="tx" value={hash} className="inline-flex items-center gap-1 font-mono text-xs underline">{hash.slice(0, 10)}…{explorerUrl && <ExternalLink size={11} />}</ExplorerLink>
   );
 }
 

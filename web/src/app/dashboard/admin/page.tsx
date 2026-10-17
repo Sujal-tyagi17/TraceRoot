@@ -4,7 +4,8 @@ import { useDash } from "@/components/DashCtx";
 import { Action, parseAddr } from "@/components/Action";
 import { Field, inputCls } from "@/components/ui";
 import { ROLES, ROLE_LABEL, roleId, type RoleName } from "@/lib/traceroot";
-import { addrLink, chain, contractAddress } from "@/lib/config";
+import { chain, contractAddress } from "@/lib/config";
+import { ExplorerLink } from "@/components/ExplorerLink";
 
 export default function Admin() {
   const { can } = useDash();
@@ -16,7 +17,7 @@ export default function Admin() {
   return (
     <div className="space-y-5">
       <p className="text-sm text-slate-600">
-        Contract <a className="font-mono underline" href={addrLink(contractAddress!)} target="_blank" rel="noreferrer">{contractAddress}</a> on {chain.name}.
+        Contract <ExplorerLink kind="address" value={contractAddress!} className="font-mono underline">{contractAddress}</ExplorerLink> on {chain.name}.
       </p>
       <div className="stagger grid gap-5 lg:grid-cols-2">
         <GrantForm title="Grant a role" fn="grantRole" cta="Grant role" state={g} set={setG} allowed={isAdmin} opts={opts} />

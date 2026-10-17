@@ -59,4 +59,11 @@ A participant whose role is revoked can no longer act on batches they hold.
 - Off-chain Postgres indexer (Supabase). Not required for correctness thanks to `_eventBlocks`; it would help for global analytics at scale.
 - Direct IPFS upload from the browser. The UI currently accepts CIDs that users pin themselves, for example with Pinata's free tier.
 - QR scanning with the camera. QR *generation* is done; phones can scan with their built-in camera app.
+- Dark mode (see docs/UI-AUDIT.md).
 - Gasless meta-transactions for producers.
+
+## Frontend notes
+
+- **Origin Sequence** (`web/src/components/intro/`): a pre-paint script in `<head>` decides once per session whether the intro plays (landing page only, never with reduced motion) and marks the session as seen before React runs, so Strict Mode and refreshes can't replay it. All timing is CSS (`--at` per element); JavaScript only listens to the curtain's own `animationstart` / `animationend`. The landing entrance is delayed by a CSS variable, `--intro-offset`, so it begins exactly as the curtain lifts.
+- **Example network** (`web/src/lib/demoNetwork.ts`): one illustrative dataset shared by the intro and the interactive hero. It is labelled as an example wherever it appears.
+- **Motion tokens** live at the top of `web/src/app/globals.css`; reduced motion collapses every animation to its end state.

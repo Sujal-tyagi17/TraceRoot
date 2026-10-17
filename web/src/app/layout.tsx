@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/bricolage-grotesque/index.css";
+import "@fontsource/instrument-sans/400.css";
+import "@fontsource/instrument-sans/500.css";
+import "@fontsource/instrument-sans/600.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
 import "./globals.css";
+import { INTRO_BOOT } from "@/components/intro/boot";
 import { Providers } from "./providers";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { Splash } from "@/components/Splash";
+import { OriginSequence } from "@/components/intro/OriginSequence";
 import { RouteProgress } from "@/components/RouteProgress";
 
 export const metadata: Metadata = {
@@ -14,15 +21,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+        {/* Decides before first paint whether the Origin Sequence plays, so the page never flashes under it. */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT }} />
       </head>
       <body className="min-h-screen">
-        <Splash />
+        <OriginSequence />
         <RouteProgress />
         <Providers>
           <Nav />

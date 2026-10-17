@@ -1,14 +1,13 @@
 "use client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { getAddress } from "viem";
 import { useTx } from "@/lib/useTx";
 import { Button, Card, ErrorBox, TxStatus } from "./ui";
 import { RootLoader } from "./Loader";
 
 /** A form that builds contract args, sends the tx, and only reports success after confirmation. */
 export function Action({
-  title, desc, fn, build, children, cta, variant = "primary", allowed = true,
+  title, desc, fn, build, children, cta, variant = "primary", allowed = true, disabled = false, footer,
 }: {
   title: string;
   desc?: string;
@@ -18,6 +17,9 @@ export function Action({
   cta: string;
   variant?: "primary" | "danger";
   allowed?: boolean;
+  /** Disable submit while the form is invalid (field hints explain why). */
+  disabled?: boolean;
+  footer?: ReactNode;
 }) {
   const qc = useQueryClient();
   const { state, send } = useTx(() => qc.invalidateQueries());
@@ -41,9 +43,10 @@ export function Action({
           {desc && <p className="mt-1 text-sm text-slate-600">{desc}</p>}
         </div>
         {children}
+        {footer}
         {err && <ErrorBox message={err} />}
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant={variant} disabled={busy}>{busy ? <><RootLoader size={16} label="Working" /> Working…</> : cta}</Button>
+          <Button type="submit" variant={variant} disabled={busy || disabled} className="press">{busy ? <><RootLoader size={16} label="Working" /> Working…</> : cta}</Button>
           <TxStatus state={state} />
         </div>
       </form>
@@ -51,19 +54,4 @@ export function Action({
   );
 }
 
-export const parseId = (v: string, label = "Batch number") => {
-  const s = v.trim().replace(/^#/, "");
-  if (!/^\d+$/.test(s) || s === "0") throw new Error(`${label} must be a positive whole number`);
-  return BigInt(s);
-};
-export const parseAddr = (v: string) => {
-  const s = v.trim();
-  if (!/^0x[0-9a-fA-F]{40}$/.test(s)) throw new Error("Enter a valid 0x… wallet address");
-  // Normalise casing so a mistyped checksum never blocks a valid address.
-  return getAddress(s.toLowerCase());
-};
-export const parseQty = (v: string) => {
-  const s = v.trim();
-  if (!/^\d+$/.test(s) || s === "0") throw new Error("Quantity must be a positive whole number");
-  return BigInt(s);
-};
+export { parseAddr, parseId, parseQty } from "@/lib/parse";

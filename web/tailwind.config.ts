@@ -15,7 +15,7 @@ export default {
         amber: { DEFAULT: "#8A5A0B", soft: "#FAEBC8" },
       },
       fontFamily: {
-        display: ["'Bricolage Grotesque'", "system-ui", "sans-serif"],
+        display: ["'Bricolage Grotesque Variable'", "'Bricolage Grotesque'", "system-ui", "sans-serif"],
         sans: ["'Instrument Sans'", "system-ui", "sans-serif"],
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
