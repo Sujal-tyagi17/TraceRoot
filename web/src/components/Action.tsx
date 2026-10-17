@@ -1,6 +1,7 @@
 "use client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
+import { getAddress } from "viem";
 import { useTx } from "@/lib/useTx";
 import { Button, Card, ErrorBox, TxStatus } from "./ui";
 
@@ -61,7 +62,8 @@ export const parseId = (v: string, label = "Batch number") => {
 export const parseAddr = (v: string) => {
   const s = v.trim();
   if (!/^0x[0-9a-fA-F]{40}$/.test(s)) throw new Error("Enter a valid 0x… wallet address");
-  return s as `0x${string}`;
+  // Normalise casing so a mistyped checksum never blocks a valid address.
+  return getAddress(s.toLowerCase());
 };
 export const parseQty = (v: string) => {
   const s = v.trim();
