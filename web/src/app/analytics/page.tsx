@@ -9,10 +9,11 @@ import { isConfigured } from "@/lib/config";
 import { inr } from "@/lib/format";
 import { Card, Empty, ErrorBox, NotConfigured, PageHeader, Spinner, inputCls } from "@/components/ui";
 import { Skel } from "@/components/Loader";
+import { ScanNote } from "@/components/ScanNote";
 
 /** Chart colours per theme (Recharts sets SVG attributes, which can't read CSS variables). */
 const CHART = {
-  light: { bar: "#173B2A", grid: "#D9E1D5", tick: "#4E5F56", axis: "#708077", tipBg: "#FFFFFF", tipText: "#1E2A24", cursor: "rgba(23,59,42,.06)" },
+  light: { bar: "#173B2A", grid: "#D9E1D5", tick: "#4E5F56", axis: "#5F6F66", tipBg: "#FFFFFF", tipText: "#1E2A24", cursor: "rgba(23,59,42,.06)" },
   dark: { bar: "#A9DB63", grid: "#283C31", tick: "#AABBB2", axis: "#889B91", tipBg: "#111E17", tipText: "#E2EAE4", cursor: "rgba(212,245,165,.08)" },
 };
 
@@ -77,7 +78,7 @@ function stageRows(points: { product: string; stage: string; perUnit: number }[]
 }
 
 export default function Analytics() {
-  const { data, isLoading, error } = useBatches(200);
+  const { data, isLoading, error } = useBatches();
   const prices = useQuery({ queryKey: ["priceByStage", data?.length], queryFn: () => priceByStage(data!), enabled: !!data?.length });
   const products = [...new Set((prices.data?.points ?? []).map((p) => p.product))];
   const [picked, setPicked] = useState<string>();
@@ -96,9 +97,10 @@ export default function Analytics() {
   const all = data ?? [];
 
   const statusRows = [
+    // Each batch is counted once: recalled (directly or inherited) wins over its normal status.
     { s: "Active", n: all.filter((b) => b.status === "Active" && !b.inheritedRecall).length },
-    { s: "Split / merged", n: all.filter((b) => b.status === "Consumed").length },
-    { s: "Sold", n: all.filter((b) => b.status === "Sold").length },
+    { s: "Split / merged", n: all.filter((b) => b.status === "Consumed" && !b.inheritedRecall).length },
+    { s: "Sold", n: all.filter((b) => b.status === "Sold" && !b.inheritedRecall).length },
     { s: "Recalled", n: all.filter((b) => b.inheritedRecall).length },
   ];
   const byProduct = new Map<string, number>();
@@ -111,16 +113,17 @@ export default function Analytics() {
       <PageHeader eyebrow="Analytics" title="Supply chain analytics">
         Worked out in your browser from on-chain records. Nothing here is estimated or invented.
       </PageHeader>
+      <ScanNote shown={data?.length} />
       {all.length === 0 ? <Empty title="No batches yet — analytics appear once activity starts" /> : (
         <div className="stagger grid gap-5 md:grid-cols-2">
-          <Card><p className="mb-1 font-medium text-ink">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /><p className="mt-3 text-xs text-slate-400">Source: the current state of every batch in the contract.</p></Card>
+          <Card><p className="mb-1 font-medium text-ink">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches, each counted once. A recalled batch counts as recalled whatever its status.</p><Chart data={statusRows} x="s" y="n" /><p className="mt-3 text-xs text-slate-400">Source: the current state of every batch in the contract.</p></Card>
           <Card><p className="mb-1 font-medium text-ink">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /><p className="mt-3 text-xs text-slate-400">Source: quantities producers registered when creating each batch.</p></Card>
           <Card className="md:col-span-2">
             <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="mb-1 font-medium text-ink">Declared price per unit at each stage</p>
                 <p className="text-xs text-slate-600">
-                  Average price paid to each kind of participant, from the {prices.data?.sampled ?? "…"} most recent batches. Shows how value grows from producer to shelf.
+                  Average declared price per unit, grouped by the receiving wallet&apos;s current role, from the {prices.data?.sampled ?? "…"} most recent batches.
                   {prices.data?.avgTransit !== undefined && <> Average time from offer to acceptance: <b>{prices.data.avgTransit.toFixed(1)} h</b>.</>}
                 </p>
               </div>

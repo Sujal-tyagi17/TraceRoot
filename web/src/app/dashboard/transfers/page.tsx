@@ -5,15 +5,18 @@ import { useDash } from "@/components/DashCtx";
 import { Action, parseAddr, parseId } from "@/components/Action";
 import { Empty, Field, inputCls } from "@/components/ui";
 import { BatchCheck, Check, canAct, rolesText, useBatchLookup, useRolesLookup } from "@/components/FormChecks";
-import { dateTime, inr, short, toPaise } from "@/lib/format";
+import { toPaise } from "@/lib/format";
+import { IncomingOffer, OutgoingOffer, useOfferNotice } from "@/components/Offer";
+import { ScanNote } from "@/components/ScanNote";
 
 export default function Transfers() {
   const { address, can } = useDash();
-  const { data } = useBatches(200);
+  const { data } = useBatches();
   const [p, setP] = useState({ id: "", to: "", price: "" });
   const [cond, setCond] = useState({ id: "", t: "", h: "", note: "" });
   const look = useBatchLookup(p.id);
   const rec = useRolesLookup(p.to);
+  const { notice, onDone } = useOfferNotice();
   const me = address?.toLowerCase();
   const outgoing = (data ?? []).filter((b) => b.pending && b.custodian.toLowerCase() === me);
   const incoming = (data ?? []).filter((b) => b.pending?.to.toLowerCase() === me);
@@ -58,16 +61,12 @@ export default function Transfers() {
       </div>
 
       <div className="space-y-5">
+        <ScanNote shown={data?.length} />
+        {notice}
         <h2 className="font-display text-xl font-[650] tracking-tight text-ink">Incoming</h2>
-        {incoming.length ? incoming.map((b) => (
-          <Action key={b.id.toString()} title={`#${b.id} · ${b.product}`} desc={`${b.quantity} ${b.unit} from ${short(b.custodian)}${b.pending!.price > 0n ? ` · ${inr(b.pending!.price)}` : ""} · expires ${dateTime(b.pending!.expiresAt)}`}
-            fn="acceptTransfer" cta="Confirm receipt" build={() => [b.id]} />
-        )) : <Empty title="No incoming offers" />}
+        {incoming.length ? incoming.map((b) => <IncomingOffer key={b.id.toString()} b={b} onDone={onDone} />) : <Empty title="No incoming offers" />}
         <h2 className="font-display text-xl font-[650] tracking-tight text-ink">Outgoing</h2>
-        {outgoing.length ? outgoing.map((b) => (
-          <Action key={b.id.toString()} title={`#${b.id} · ${b.product}`} desc={`Offered to ${short(b.pending!.to)} · waiting for acceptance`}
-            fn="cancelTransfer" cta="Withdraw offer" variant="danger" build={() => [b.id]} />
-        )) : <Empty title="No outgoing offers" />}
+        {outgoing.length ? outgoing.map((b) => <OutgoingOffer key={b.id.toString()} b={b} onDone={onDone} />) : <Empty title="No outgoing offers" />}
       </div>
     </div>
   );

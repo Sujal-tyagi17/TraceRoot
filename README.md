@@ -8,9 +8,9 @@ TraceRoot is a blockchain supply chain provenance platform. It records every bat
 
 | | |
 |---|---|
-| Live site | _add your Vercel URL after deploying_ |
-| Contract | _add the explorer link from `contracts/deployments/amoy.json`_ |
-| Network | Polygon Amoy (chain 80002), configurable to Sepolia |
+| Live site | Not deployed yet. See [Deploy for free](#deploy-for-free-testnet) |
+| Contract | Not deployed to a testnet yet. Everything below runs on a local Hardhat chain |
+| Network | Polygon Amoy (chain 80002) by default, configurable to Sepolia or a local chain |
 
 | Light | Dark |
 |---|---|
@@ -46,6 +46,33 @@ _Screenshots are from a local Hardhat chain seeded with `npm run seed:local`. Th
 
 A blockchain proves *who signed what, and when*. It cannot verify that a physical product matches its record (the oracle problem). Inspections and prices are declarations by accountable participants, not physical proof.
 
+## How the pieces fit
+
+```
+Browser (Next.js, wagmi + viem) ──reads──▶ public RPC ──▶ TraceRoot contract (source of truth)
+        │                                                    ▲
+        └── wallet (MetaMask) signs writes ──────────────────┘
+```
+
+- **No backend, no indexer, no database.** Every page reads the contract directly. Current state comes from `getBatch`, `isRecalled` and `pendingTransfer`; history comes from events.
+- **History without an indexer.** The contract records the block numbers of every event touching a batch (`getEventBlocks`). The site fetches logs for exactly those blocks, which works on free RPCs that limit `eth_getLogs` ranges.
+- **Lists read the newest 500 batches.** Explorer, dashboard, analytics and participants say so on the page if there are more; any batch can still be opened by number.
+- **Wallets are optional.** Checking a product never needs one. Writes are simulated first (so contract errors show before signing) and reported as successful only after the receipt confirms.
+
+## Demo workflow
+
+`npm run seed:local` creates six batches covering a handoff with a cold-chain reading, an inspection, a merge, a split, a retail sale, a recall and a pending offer. To walk the full journey yourself, import Hardhat's test keys into MetaMask (the seed script uses accounts 1–6 for producer, second producer, transporter, trader, inspector and retailer):
+
+1. **Producer:** *Dashboard → Batches → Create a batch*, then *Transfers → Offer a handoff* to the trader.
+2. **Trader:** *Dashboard* shows the offer; *Confirm receipt*. Then *Batches → Split* (for example 40, 60; the form checks the sum live).
+3. **Transporter:** accept a lot, *Log a condition reading*, and offer it to the retailer. The retailer can **Decline** or **Confirm receipt**.
+4. **Inspector:** *Inspections → Record an inspection*.
+5. **Retailer:** *Batches → Mark as sold*.
+6. **Administrator or inspector:** *Recalls → Issue a recall* on the origin batch.
+7. **Anyone, no wallet:** open `/batch/<id>` or scan its QR code. Descendants show "Do not use this product", including lots already sold.
+
+The browser test `web/tests/e2e/workflow.spec.ts` runs exactly this journey and checks each step against contract state.
+
 ## Repository layout
 
 ```
@@ -60,7 +87,7 @@ docs/        Architecture, security notes, progress log
 # 1. Contracts
 cd contracts
 npm install
-npx hardhat test                # 30 tests
+npx hardhat test                # 51 tests
 npx hardhat coverage
 
 # 2. Local chain with demo data (three terminals)
@@ -99,13 +126,22 @@ The deploy script refuses to run on any chain except Amoy, Sepolia and local Har
 | Command | What it does |
 |---|---|
 | `web: npm run lint` | ESLint (Next.js core web vitals + TypeScript rules) |
-| `web: npm test` | 15 unit tests: example network lineage, role permissions, form parsers, error classification, QR content validation |
-| `web: npm run test:e2e` | 27 Playwright browser tests against a seeded local chain: dashboard roles, real transactions, intro, theme, and QR scanning with a simulated camera (see `web/tests/e2e/README.md`) |
-| `contracts: npm test` | 30 contract tests: roles, handoffs, expiry, split/merge conservation, recalls, lineage cap, event index |
-| `contracts: npm run coverage` | ≈99% line coverage |
+| `web: npm test` | 19 unit tests: example network lineage, role permissions, form parsers, error classification, QR content validation, offer expiry |
+| `web: npm run test:e2e` | 41 Playwright browser tests against a seeded local chain, including the full supply-chain journey with one wallet per role (each step checked against contract state), declining and expired offers, wrong network, an RPC failure after sending, roles, intro, theme, keyboard access, and QR scanning with a simulated camera (see `web/tests/e2e/README.md`) |
+| `contracts: npm test` | 51 contract tests: a full workflow with state and event checks at every step, unauthorized callers, repeated operations, boundary values (part counts, uint128 limits, byte-length text limits, grades, dates), recall inheritance through split → merge → split, pause behaviour, randomized quantity invariant |
+| `contracts: npm run coverage` | 100% line and function coverage, 84.8% branch coverage |
 | `contracts: npm run slither` | Static analysis; see `docs/SECURITY.md` for triage |
 
-The test suite includes a randomized split/merge invariant test showing total active quantity never changes. This is automated testing, not a formal audit.
+The test suite includes a randomized split/merge invariant test showing total active quantity never changes. This is automated testing, not a formal audit. Passing tests do not prove the contract is secure; see `docs/SECURITY.md` for the review notes and known risks.
+
+## Known issues and next steps
+
+- **Not deployed yet.** Deploying to Amoy needs a test wallet with faucet funds, and hosting needs a Vercel account. Both are manual steps (above).
+- **Single administrator key.** Fine for a demo; production would use a multisig.
+- **No indexer.** List pages read up to 500 batches through the RPC. Beyond a few hundred batches a free indexer (for example a subgraph) would be faster.
+- **Camera scanning needs HTTPS** and has only been tested with a simulated camera in Chromium. Real phones should be checked once the site is deployed.
+- **Browser tests run locally only** (they need a seeded chain); CI runs the contract tests, type check, lint, unit tests and the build.
+- **Dependency advisories** sit inside wallet libraries this site doesn't use (WalletConnect, MetaMask SDK) and Next's build-time PostCSS. Fixing them needs major upgrades; they are tracked in `docs/SECURITY.md`.
 
 ## Tech stack
 

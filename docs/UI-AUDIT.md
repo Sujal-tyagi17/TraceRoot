@@ -21,7 +21,11 @@ _Updated 18 Oct 2026._
 | Missing batch | `/batch/999` showed a raw RPC error that overflowed on phones | ✅ "Batch #999 does not exist" with a link to browse; other errors are friendly with a retry button |
 | Scanner on phones | (found in this pass) The dialog was trapped inside the animated hero, so the backdrop didn't cover the screen | ✅ Portalled to `<body>`; covered by a test |
 | Mobile menu | Active page not marked | ✅ Highlighted with `aria-current` |
-| Tooling | No lint or tests in `web` | ✅ ESLint, 15 Vitest unit tests, 27 Playwright browser tests, CI runs lint and unit tests |
+| Handoff offers | No way to decline; expired or recalled offers showed a button that would fail; confirmation vanished with the card | ✅ Decline / Withdraw, expiry from chain time, recall warning, page-level confirmation |
+| Transaction states | A receipt lookup failing after broadcast looked like a network error | ✅ "Sent, but not confirmed yet" with the link, so it isn't sent twice |
+| Totals | Lists read the newest 200 batches but called the count a total | ✅ Newest 500, with a note when there are more; dashboard total from the contract |
+| Accessibility | Small light-mode text below 4.5:1; diagram names didn't match visible text; no skip link | ✅ axe-core clean (WCAG A/AA) on main pages in both themes; skip link |
+| Tooling | No lint or tests in `web` | ✅ ESLint, 19 Vitest unit tests, 41 Playwright browser tests (including the full workflow), CI runs lint and unit tests |
 
 ## Known remaining items
 

@@ -55,3 +55,13 @@ test.describe("mobile", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Every batch on TraceRoot");
   });
 });
+
+test("keyboard users can skip straight to the main content", async ({ page }) => {
+  await page.goto("/explorer");
+  await page.keyboard.press("Tab");
+  const skip = page.getByRole("link", { name: "Skip to main content" });
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("main#main")).toBeFocused();
+});

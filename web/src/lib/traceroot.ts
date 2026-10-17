@@ -81,7 +81,10 @@ export async function getBatch(id: bigint): Promise<Batch> {
   };
 }
 
-export async function listBatches(limit = 60): Promise<Batch[]> {
+/** Pages that list batches read at most this many (newest first) and say so when there are more. */
+export const SCAN_LIMIT = 500;
+
+export async function listBatches(limit = SCAN_LIMIT): Promise<Batch[]> {
   const n = await batchCount();
   const ids: bigint[] = [];
   for (let i = n; i >= 1 && ids.length < limit; i--) ids.push(BigInt(i));

@@ -94,7 +94,7 @@ export function NotConfigured() {
   );
 }
 
-const ERROR_TITLE = { rejected: "You cancelled it in your wallet", reverted: "The contract rejected it", network: "Network problem", setup: "Not ready yet" } as const;
+const ERROR_TITLE = { rejected: "You cancelled it in your wallet", reverted: "The contract rejected it", network: "Network problem", setup: "Not ready yet", funds: "Not enough gas money", unconfirmed: "Sent, but not confirmed yet" } as const;
 
 /** Truthful transaction feedback. Success appears only after the receipt confirms it. */
 export function TxStatus({ state }: { state: TxState }) {
@@ -106,7 +106,7 @@ export function TxStatus({ state }: { state: TxState }) {
   else if (state.phase === "confirmed")
     body = <p className="confirm-pop flex flex-wrap items-center gap-2 rounded-full bg-lime px-3 py-1 text-sm font-medium text-forest"><CheckCircle2 size={15} /> Confirmed on-chain <TxLink hash={state.hash} /></p>;
   else body = (
-    <div className={`rounded-xl px-4 py-3 text-sm ${state.kind === "rejected" || state.kind === "setup" ? "bg-paper-200 text-slate" : "bg-danger-soft text-danger"}`}>
+    <div className={`rounded-xl px-4 py-3 text-sm ${state.kind === "rejected" || state.kind === "setup" || state.kind === "funds" ? "bg-paper-200 text-slate" : state.kind === "unconfirmed" ? "bg-amber-soft text-amber" : "bg-danger-soft text-danger"}`}>
       <p className="font-semibold">{ERROR_TITLE[state.kind]}</p>
       <p className="mt-0.5">{state.message}</p>
       {state.hash && <p className="mt-1"><TxLink hash={state.hash} /></p>}

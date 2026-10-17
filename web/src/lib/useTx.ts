@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
-import { BaseError, ContractFunctionRevertedError, type Hex } from "viem";
+import { BaseError, ContractFunctionRevertedError, InsufficientFundsError, type Hex } from "viem";
 import { abi, publicClient } from "./traceroot";
 import { chain, contractAddress } from "./config";
 
@@ -12,7 +12,10 @@ export type TxState =
   | { phase: "confirmed"; hash: Hex }
   | { phase: "error"; kind: ErrorKind; message: string; hash?: Hex };
 
-export type ErrorKind = "rejected" | "reverted" | "network" | "setup";
+/** `unconfirmed`: the transaction was broadcast but its receipt couldn't be read, so it may still succeed. */
+export type ErrorKind = "rejected" | "reverted" | "network" | "setup" | "funds" | "unconfirmed";
+
+const NO_FUNDS = /insufficient funds|exceeds the balance of the account/i;
 
 const FRIENDLY: Record<string, string> = {
   NotCustodian: "You are not the current custodian of this batch.",
@@ -44,6 +47,7 @@ const FRIENDLY: Record<string, string> = {
 export function classify(e: unknown): ErrorKind {
   const msg = e instanceof Error ? e.message : String(e);
   if (/User (rejected|denied)|rejected the request/i.test(msg)) return "rejected";
+  if (NO_FUNDS.test(msg) || (e instanceof BaseError && e.walk((x) => x instanceof InsufficientFundsError))) return "funds";
   if (e instanceof BaseError && e.walk((x) => x instanceof ContractFunctionRevertedError)) return "reverted";
   if (/revert/i.test(msg)) return "reverted";
   if (/fetch|network|timeout|HTTP request failed|ECONN|rate limit/i.test(msg)) return "network";
@@ -60,14 +64,14 @@ export function explain(e: unknown): string {
     }
     if (/User (rejected|denied)/i.test(e.message)) return "Nothing was sent. You can try again whenever you're ready.";
     if (/fetch|network|timeout|HTTP request failed/i.test(e.message)) return "Couldn't reach the blockchain. Check your connection, then try again.";
-    if (/insufficient funds/i.test(e.message)) return `Not enough test ${chain.nativeCurrency.symbol} for gas. Use a faucet.`;
+    if (NO_FUNDS.test(e.message) || e.walk((x) => x instanceof InsufficientFundsError)) return `Not enough test ${chain.nativeCurrency.symbol} for gas, so nothing was sent. Get free test tokens from a faucet.`;
     return e.shortMessage;
   }
   return e instanceof Error ? e.message : String(e);
 }
 
 /** Simulates first (surfacing contract errors before signing), then waits for confirmation. */
-export function useTx(onConfirmed?: () => void) {
+export function useTx(onConfirmed?: (hash: Hex) => void) {
   const { address, chainId } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const [state, setState] = useState<TxState>({ phase: "idle" });
@@ -82,10 +86,16 @@ export function useTx(onConfirmed?: () => void) {
       const { request } = await publicClient.simulateContract({ address: contractAddress, abi, functionName, args, account: address } as never);
       hash = await writeContractAsync(request as never);
       setState({ phase: "pending", hash });
-      const rc = await publicClient.waitForTransactionReceipt({ hash });
-      if (rc.status !== "success") throw new Error("The transaction reverted on-chain.");
+      let rc;
+      try {
+        rc = await publicClient.waitForTransactionReceipt({ hash });
+      } catch {
+        // Already broadcast: it may still be mined. Never invite a blind resubmit (that could do it twice).
+        return setState({ phase: "error", kind: "unconfirmed", hash, message: "Your transaction was sent, but the site couldn't confirm it yet. Open the link to check it before trying again, so it isn't sent twice." });
+      }
+      if (rc.status !== "success") throw new Error("The transaction was included in a block but reverted on-chain, so nothing changed.");
       setState({ phase: "confirmed", hash });
-      onConfirmed?.();
+      onConfirmed?.(hash);
     } catch (e) {
       setState({ phase: "error", kind: classify(e), message: explain(e), hash });
     }

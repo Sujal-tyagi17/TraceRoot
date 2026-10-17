@@ -67,6 +67,7 @@ export function RootTree() {
             fill={fill} stroke={red ? CORAL : LIME} strokeWidth={isSel ? 3 : child ? 1.5 : 1.8} strokeDasharray={child ? "6 4" : undefined}
             style={{ ["--fd" as string]: recalled ? `${d * 0.18}s` : "0s" }} />
           <text className="flow" x={p.x} y={p.y - 2} textAnchor="middle" fontSize="17" fontWeight={650} fill={ink} style={{ ["--fd" as string]: recalled ? `${d * 0.18}s` : "0s" }}>{n.label}</text>
+          {/* keeps the spoken name and visible text in step (label in name, WCAG 2.5.3) */}{" "}
           <text x={p.x} y={p.y + 15} textAnchor="middle" fontSize="12.5" fill={parent && !red ? DEEP : PAPER} fillOpacity={parent && !red ? 0.8 : 0.72} className="max-sm:hidden">{n.sub}</text>
         </g>
       </g>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { use } from "react";
 import { AlertOctagon, ArrowRightLeft, CalendarDays, MapPin, Package, User } from "lucide-react";
 import type { ReactNode } from "react";
-import { useAncestors, useBatch, useChildren, useHistory } from "@/lib/hooks";
+import { useAncestors, useBatch, useChainNow, useChildren, useHistory } from "@/lib/hooks";
 import { isConfigured } from "@/lib/config";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { date, inr, short } from "@/lib/format";
@@ -34,6 +34,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
   const hist = useHistory(id);
   const anc = useAncestors(batch.data);
   const kids = useChildren(batch.data);
+  const now = useChainNow();
 
   if (!isConfigured) return <NotConfigured />;
   if (!valid) return <Empty title="That is not a batch number" />;
@@ -82,7 +83,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
               value={<ExplorerLink kind="address" value={b.producer} className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.producer, 5)}</ExplorerLink>} />
             <Fact icon={<User size={15} />} label="Held by"
               value={<ExplorerLink kind="address" value={b.custodian} className="font-mono text-[14px] underline decoration-forest/30 underline-offset-4 hover:decoration-forest">{short(b.custodian, 5)}</ExplorerLink>} />
-            {b.pending && <Fact icon={<ArrowRightLeft size={15} />} label="Waiting for" value={<span className="text-amber">{short(b.pending.to)} to accept{b.pending.price > 0n && `, ${inr(b.pending.price)}`}</span>} />}
+            {b.pending && <Fact icon={<ArrowRightLeft size={15} />} label={now > Number(b.pending.expiresAt) ? "Offer expired" : "Waiting for"} value={<span className="text-amber">{short(b.pending.to)}{now > Number(b.pending.expiresAt) ? ` didn't accept by ${date(b.pending.expiresAt)}` : " to accept"}{b.pending.price > 0n && `, ${inr(b.pending.price)}`}</span>} />}
           </dl>
         </div>
         <div className="relative flex flex-col items-center justify-center gap-2 border-t-2 border-dashed border-paper-300 bg-paper/60 p-6 md:border-l-2 md:border-t-0 md:px-9">

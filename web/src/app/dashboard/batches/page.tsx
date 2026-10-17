@@ -14,6 +14,7 @@ export default function Batches() {
   const [c, setC] = useState({ product: "", qty: "", unit: "kg", origin: "", date: "", cid: "" });
   const [ev, setEv] = useState({ id: "", kind: "photo", cid: "" });
   const [sold, setSold] = useState({ id: "", price: "" });
+  const soldLook = useBatchLookup(sold.id);
 
   return (
     <div className="stagger grid gap-5 lg:grid-cols-2">
@@ -55,6 +56,9 @@ export default function Batches() {
 
       <Action title="Mark as sold" desc="Final step for retailers. Sold batches cannot move again." fn="markSold" cta="Mark sold"
         allowed={can.markSold}
+        disabled={!soldLook.batch || canAct(soldLook.batch, address) !== true || (!!sold.price && !/^\d+(\.\d{1,2})?$/.test(sold.price))}
+        footer={<div className="space-y-1"><BatchCheck raw={sold.id} me={address} look={soldLook} />
+          {sold.price && !/^\d+(\.\d{1,2})?$/.test(sold.price) && <Check ok={false}>Enter a price in rupees, like 960 or 960.50.</Check>}</div>}
         build={() => [parseId(sold.id), toPaise(sold.price || "0")]}>
         <div className="grid grid-cols-[110px_1fr] gap-3">
           <Field label="Batch #"><input className={inputCls} value={sold.id} onChange={(e) => setSold({ ...sold, id: e.target.value })} /></Field>

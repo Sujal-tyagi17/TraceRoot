@@ -7,13 +7,14 @@ import { BatchRow } from "@/components/BatchRow";
 import { Button, Empty, ErrorBox, NotConfigured, PageHeader, inputCls } from "@/components/ui";
 import { RowSkeleton } from "@/components/Loader";
 import { ScanButton } from "@/components/QrScanner";
+import { ScanNote } from "@/components/ScanNote";
 
 const FILTERS = ["All", "Active", "In transfer", "Sold", "Split / merged", "Recalled"] as const;
 const SORTS = { newest: "Newest first", oldest: "Oldest first", qty: "Largest quantity", produced: "Recently produced" } as const;
 const PAGE = 20;
 
 export default function Explorer() {
-  const { data, isLoading, error, refetch, isRefetching } = useBatches(500);
+  const { data, isLoading, error, refetch, isRefetching } = useBatches();
   const [q, setQ] = useState("");
   const [f, setF] = useState<(typeof FILTERS)[number]>("All");
   const [product, setProduct] = useState("all");
@@ -93,6 +94,7 @@ export default function Explorer() {
               : <Empty title="No batches yet">Producers create the first batch from the dashboard to start tracking its journey.</Empty>
           ) : (
             <>
+              <ScanNote shown={data?.length} />
               <p className="mb-3 text-sm text-slate-600" aria-live="polite">{rows.length} batch{rows.length === 1 ? "" : "es"}</p>
               <div className="stagger space-y-2">{rows.slice(0, shown).map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div>
               {rows.length > shown && (

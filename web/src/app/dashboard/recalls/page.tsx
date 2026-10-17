@@ -5,10 +5,11 @@ import { useDash } from "@/components/DashCtx";
 import { Action, parseId } from "@/components/Action";
 import { BatchRow } from "@/components/BatchRow";
 import { Empty, Field, inputCls } from "@/components/ui";
+import { ScanNote } from "@/components/ScanNote";
 
 export default function Recalls() {
   const { can } = useDash();
-  const { data } = useBatches(200);
+  const { data } = useBatches();
   const [r, setR] = useState({ id: "", reason: "" });
   const [c, setC] = useState({ id: "", reason: "" });
   const active = (data ?? []).filter((b) => b.inheritedRecall);
@@ -32,6 +33,7 @@ export default function Recalls() {
       </div>
       <section>
         <h2 className="mb-3 font-display text-xl font-[650] tracking-tight text-ink">Batches currently under recall</h2>
+        <ScanNote shown={data?.length} />
         {active.length ? <div className="space-y-2">{active.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div> : <Empty title="No active recalls" />}
       </section>
     </div>

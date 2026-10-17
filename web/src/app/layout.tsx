@@ -26,8 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <OriginSequence />
         <RouteProgress />
         <Providers>
+          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-on-primary">Skip to main content</a>
           <Nav />
-          <main className="mx-auto max-w-6xl px-5 pt-10 md:pt-14">{children}</main>
+          <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-5 pt-10 outline-none md:pt-14">{children}</main>
           <Footer />
         </Providers>
       </body>

@@ -4,7 +4,8 @@ import { can, TABS } from "@/lib/permissions";
 import { parseAddr, parseId, parseQty } from "@/lib/parse";
 import { inr, toPaise } from "@/lib/format";
 import { classify } from "@/lib/useTx";
-import { roleId } from "@/lib/traceroot";
+import { roleId, type Batch } from "@/lib/traceroot";
+import { offerProblem } from "@/lib/offers";
 
 describe("example network", () => {
   it("conserves quantity at the split", () => {
@@ -73,6 +74,8 @@ describe("transaction error classification", () => {
     expect(classify(new Error("User rejected the request."))).toBe("rejected");
     expect(classify(new Error("HTTP request failed. fetch failed"))).toBe("network");
     expect(classify(new Error("execution reverted"))).toBe("reverted");
+    expect(classify(new Error("insufficient funds for gas * price + value"))).toBe("funds");
+    expect(classify(new Error("The total cost (gas * gas fee + value) of executing this transaction exceeds the balance of the account."))).toBe("funds");
   });
 });
 
@@ -91,4 +94,15 @@ describe("QR scan parsing", () => {
       expect(parseScan(bad, here).kind).toBe("invalid");
     }
   });
+});
+
+describe("incoming offers", () => {
+  const base = { id: 7n, status: "Active", inheritedRecall: false, pending: { to: "0x1", expiresAt: 1_000n, price: 0n } } as unknown as Batch;
+  it("a live offer has no problem", () => expect(offerProblem(base, 999)).toBeUndefined());
+  it("an expired offer is explained, matching the contract's strict > check", () => {
+    expect(offerProblem(base, 1000)).toBeUndefined();
+    expect(offerProblem(base, 1001)).toMatch(/expired/);
+  });
+  it("a recalled batch can't be accepted, even before expiry", () => expect(offerProblem({ ...base, inheritedRecall: true }, 1)).toMatch(/recall/));
+  it("no pending offer, no problem", () => expect(offerProblem({ ...base, pending: undefined }, 5000)).toBeUndefined());
 });

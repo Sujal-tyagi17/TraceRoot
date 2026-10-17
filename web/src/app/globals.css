@@ -8,10 +8,10 @@
   color-scheme: light;
   /* Theme colours as RGB channels (used by tailwind.config.ts). Light = field-white paper, forest ink. */
   --c-paper: 244 246 241;      --c-paper-200: 233 238 230;  --c-paper-300: 217 225 213;
-  --c-surface: 255 255 255;    --c-ink: 23 59 42;           --c-sprout: 62 138 92;
-  --c-slate: 30 42 36;         --c-slate-600: 78 95 86;     --c-slate-400: 112 128 119;
+  --c-surface: 255 255 255;    --c-ink: 23 59 42;           --c-sprout: 51 120 77;
+  --c-slate: 30 42 36;         --c-slate-600: 78 95 86;     --c-slate-400: 95 111 102;
   --c-primary: 23 59 42;       --c-primary-hover: 34 81 58; --c-on-primary: 244 246 241;
-  --c-danger: 194 59 46;       --c-danger-soft: 251 227 223;
+  --c-danger: 178 52 39;       --c-danger-soft: 251 227 223;
   --c-amber: 138 90 11;        --c-amber-soft: 250 235 200;
   --shadow-lift: 0 1px 0 rgba(14,42,30,.04), 0 10px 30px -18px rgba(14,42,30,.28);
   --ease-out: cubic-bezier(.2, .8, .2, 1);        /* entrances */

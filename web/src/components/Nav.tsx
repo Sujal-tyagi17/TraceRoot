@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Logo } from "./Logo";
 import { Connect } from "./Connect";
 import { ThemeToggle } from "./ThemeToggle";
-import { chain } from "@/lib/config";
+import { chain, networkLabel } from "@/lib/config";
 
 const LINKS = [
   { href: "/explorer", label: "Explorer" },
@@ -35,7 +35,7 @@ export function Nav() {
           })}
         </div>
         <div className="flex items-center gap-2">
-          <span title="TraceRoot runs on a public test network. No real money is used."
+          <span title={`TraceRoot is running on ${networkLabel}. No real money is used.`}
             className="hidden items-center gap-1.5 rounded-full bg-lime px-2.5 py-1 text-xs font-medium text-forest sm:inline-flex">
             <span className="h-1.5 w-1.5 rounded-full bg-forest" /> {chain.name}
           </span>
