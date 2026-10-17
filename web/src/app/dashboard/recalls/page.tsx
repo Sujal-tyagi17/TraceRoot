@@ -31,7 +31,7 @@ export default function Recalls() {
         </Action>
       </div>
       <section>
-        <h2 className="mb-3 font-display text-xl text-forest">Batches currently under recall</h2>
+        <h2 className="mb-3 font-display text-xl font-[650] tracking-tight text-forest">Batches currently under recall</h2>
         {active.length ? <div className="space-y-2">{active.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div> : <Empty title="No active recalls" />}
       </section>
     </div>

@@ -7,7 +7,7 @@ import { txLink } from "@/lib/config";
 import type { Batch } from "@/lib/traceroot";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-xl border border-paper-300 bg-white/70 p-5 shadow-[0_1px_0_rgba(23,59,42,.04)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-paper-300/80 bg-white p-6 shadow-lift ${className}`}>{children}</div>;
 }
 
 export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "good" | "bad" | "warn" | "dark" }) {
@@ -31,12 +31,12 @@ export function StatusPill({ b }: { b: Batch }) {
 
 export function Button({ children, variant = "primary", className = "", ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" }) {
   const v = {
-    primary: "bg-forest text-paper hover:bg-forest-700",
+    primary: "bg-forest text-paper hover:bg-forest-700 active:translate-y-px",
     ghost: "border border-paper-300 bg-white text-forest hover:bg-paper-200",
-    danger: "bg-alert text-white hover:opacity-90",
+    danger: "bg-alert text-white hover:bg-[#a83226] active:translate-y-px",
   }[variant];
   return (
-    <button {...p} className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-500 ${v} ${className}`}>
+    <button {...p} className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-500 ${v} ${className}`}>
       {children}
     </button>
   );
@@ -53,7 +53,7 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 }
 
 export const inputCls =
-  "w-full rounded-lg border border-paper-300 bg-white px-3 py-2 text-sm text-slate placeholder:text-slate-400 focus:border-forest-500 focus:outline-none focus:ring-2 focus:ring-lime";
+  "w-full rounded-xl border border-paper-300 bg-paper/60 px-3.5 py-2.5 text-[15px] text-slate placeholder:text-slate-400 transition focus:border-forest-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-lime/60";
 
 export function Spinner({ label = "Loading from chain…" }: { label?: string }) {
   return <div className="flex items-center gap-2 py-8 text-sm text-slate-600"><Loader2 className="animate-spin" size={16} /> {label}</div>;
@@ -61,8 +61,8 @@ export function Spinner({ label = "Loading from chain…" }: { label?: string })
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-paper-300 px-6 py-10 text-center">
-      <p className="font-display text-lg text-forest">{title}</p>
+    <div className="rounded-2xl border border-dashed border-paper-300 bg-white/40 px-6 py-10 text-center">
+      <p className="font-display text-lg font-[650] text-forest">{title}</p>
       {children && <div className="mt-2 text-sm text-slate-600">{children}</div>}
     </div>
   );
@@ -77,7 +77,7 @@ export function NotConfigured() {
     <Card className="flex gap-4">
       <PlugZap className="mt-1 shrink-0 text-forest" />
       <div className="text-sm text-slate-600">
-        <p className="font-medium text-slate">Contract not connected yet</p>
+        <p className="font-semibold text-slate">Contract not connected yet</p>
         <p className="mt-1">
           Set <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code> after deploying to the testnet. Nothing is shown here until then — TraceRoot never displays invented on-chain data.{" "}
           <Link href="/docs" className="underline">Setup guide</Link>
@@ -105,12 +105,12 @@ export function TxLink({ hash }: { hash: string }) {
   );
 }
 
-export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+/** `eyebrow` is accepted for compatibility but intentionally not rendered. */
+export function PageHeader({ title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
   return (
-    <header className="mb-8">
-      {eyebrow && <p className="mb-2 text-xs font-semibold uppercase tracking-[.18em] text-forest-500">{eyebrow}</p>}
-      <h1 className="font-display text-3xl font-semibold text-forest md:text-4xl">{title}</h1>
-      {children && <div className="mt-3 max-w-2xl text-slate-600">{children}</div>}
+    <header className="mb-10">
+      <h1 className="font-display text-4xl font-[750] leading-[1.02] tracking-[-0.035em] text-forest md:text-5xl">{title}</h1>
+      {children && <div className="mt-3 max-w-xl text-[17px] text-slate-600">{children}</div>}
     </header>
   );
 }

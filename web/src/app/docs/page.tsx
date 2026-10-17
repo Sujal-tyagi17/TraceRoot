@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui";
 export const metadata = { title: "Docs" };
 
 const S = ({ t, children }: { t: string; children: React.ReactNode }) => (
-  <section className="space-y-2"><h2 className="font-display text-2xl text-forest">{t}</h2><div className="space-y-2 text-slate-600">{children}</div></section>
+  <section className="space-y-2"><h2 className="font-display text-2xl font-[650] tracking-tight text-forest">{t}</h2><div className="space-y-2 text-slate-600">{children}</div></section>
 );
 const C = ({ children }: { children: React.ReactNode }) => <code className="rounded bg-paper-200 px-1.5 py-0.5 font-mono text-sm">{children}</code>;
 

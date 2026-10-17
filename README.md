@@ -12,6 +12,12 @@ TraceRoot is a blockchain supply chain provenance platform. It records every bat
 | Contract | _add the explorer link from `contracts/deployments/amoy.json`_ |
 | Network | Polygon Amoy (chain 80002), configurable to Sepolia |
 
+![TraceRoot home page](docs/screenshots/home.png)
+
+| Recall flowing through every branch | Batch page on a phone |
+|---|---|
+| ![Recall demo](docs/screenshots/recall-demo.png) | ![Mobile batch page](docs/screenshots/mobile.png) |
+
 ## What the contract guarantees
 
 - **Two-step handoffs.** Custody moves only when the recipient accepts. Offers expire after 7 days; either side can cancel.

@@ -4,17 +4,17 @@ import { addrLink, contractAddress, githubUrl } from "@/lib/config";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-paper-300">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <LogoMark size={24} />
-          <span><span className="font-medium text-forest">TraceRoot</span> — Every Product Has a Story.</span>
+    <footer className="mt-28 bg-forest text-paper/80">
+      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1fr_auto] md:items-end">
+        <div>
+          <div className="flex items-center gap-3"><LogoMark size={30} /><span className="font-display text-xl font-[750] tracking-tight text-paper">TraceRoot</span></div>
+          <p className="mt-3 max-w-sm text-sm">Every product has a story. Built by Sujal Tyagi as an open-source portfolio project.</p>
         </div>
-        <div className="flex flex-wrap gap-5">
-          <Link href="/about">About</Link>
-          <Link href="/docs">Docs</Link>
-          <a href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
-          {contractAddress && <a href={addrLink(contractAddress)} target="_blank" rel="noreferrer">Contract</a>}
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <Link className="hover:text-lime" href="/about">About</Link>
+          <Link className="hover:text-lime" href="/docs">Docs</Link>
+          <a className="hover:text-lime" href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+          {contractAddress && <a className="hover:text-lime" href={addrLink(contractAddress)} target="_blank" rel="noreferrer">Contract</a>}
         </div>
       </div>
     </footer>

@@ -36,8 +36,8 @@ export function Action({
         }}
       >
         <div>
-          <p className="font-display text-lg text-forest">{title}</p>
-          {desc && <p className="text-sm text-slate-600">{desc}</p>}
+          <p className="font-display text-xl font-[650] tracking-tight text-forest">{title}</p>
+          {desc && <p className="mt-1 text-sm text-slate-600">{desc}</p>}
         </div>
         {children}
         {err && <ErrorBox message={err} />}

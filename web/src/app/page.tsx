@@ -1,84 +1,88 @@
 import Link from "next/link";
-import { ArrowRight, GitMerge, Handshake, Scale, Siren, ScanLine, ReceiptIndianRupee } from "lucide-react";
+import { Handshake, Scale, Siren, ReceiptIndianRupee, GitBranch, ScanLine } from "lucide-react";
 import { Lookup } from "@/components/Lookup";
-import { Journey } from "@/components/Journey";
-import { chain, githubUrl } from "@/lib/config";
+import { RootTree } from "@/components/RootTree";
+import { githubUrl } from "@/lib/config";
 
-const FEATURES = [
-  { icon: Handshake, t: "Two-step handoffs", d: "Custody only changes when the receiver accepts. Neither party can fake a transfer alone." },
-  { icon: Scale, t: "Quantity conservation", d: "Splits and merges must add up exactly. The contract rejects any batch that would create quantity from nothing." },
-  { icon: Siren, t: "Inherited recalls", d: "Recall a source batch and every descendant is flagged instantly — computed on-chain, never waiting on an indexer." },
-  { icon: ReceiptIndianRupee, t: "Price transparency", d: "Each handoff can declare a price, so you can see how value is shared along the chain." },
-  { icon: GitMerge, t: "Full ancestry", d: "Navigate parent and child batches to see exactly which lots ended up on the shelf." },
-  { icon: ScanLine, t: "QR for consumers", d: "Every batch gets a public page and QR code. No wallet, no sign-up needed to verify a product." },
+const STEPS = [
+  ["Register at the source", "A producer records the lot: what it is, how much, where and when it was harvested."],
+  ["Hand it over in two steps", "The sender offers the batch. Custody moves only when the receiver confirms they have it."],
+  ["Split, merge, inspect", "Traders split lots for different buyers. Inspectors add grades and reports along the way."],
+  ["Scan on the shelf", "The retailer prints a QR code. Anyone can scan it and read the whole journey."],
+];
+
+const GUARANTEES = [
+  { icon: Handshake, t: "Nobody fakes a handoff alone", d: "Both sides sign. An offer that is never accepted never moves the goods." },
+  { icon: Scale, t: "Quantity can't appear from nowhere", d: "Split 100 kg and the parts must total exactly 100 kg. The contract rejects anything else." },
+  { icon: Siren, t: "Recalls reach every branch", d: "Recall a lot and every batch made from it is flagged at once, even ones split off earlier." },
+  { icon: ReceiptIndianRupee, t: "Prices are on the record", d: "Each handoff can declare a price, so you can see how value is shared from farm to shelf." },
+  { icon: GitBranch, t: "Ancestry stays connected", d: "Follow any batch back to the farms it came from, or forward to where it ended up." },
+  { icon: ScanLine, t: "Checking needs no account", d: "Consumers scan and read. No wallet, app or sign-up." },
 ];
 
 export default function Home() {
   return (
-    <div className="space-y-24">
-      <section className="grid items-center gap-12 pt-6 md:grid-cols-[1.1fr_.9fr]">
-        <div className="rise">
-          <p className="mb-4 inline-flex rounded-full bg-lime px-3 py-1 text-xs font-medium text-forest">Live on {chain.name} testnet</p>
-          <h1 className="font-display text-5xl font-semibold leading-[1.05] tracking-tight text-forest md:text-6xl">
-            Every product<br />has a story.
+    <div className="space-y-28 md:space-y-36">
+      <section className="grid items-center gap-10 md:grid-cols-[1fr_1.05fr] md:gap-14 [&>*]:min-w-0">
+        <div>
+          <h1 className="font-display text-[3.4rem] font-[750] leading-[.95] tracking-[-0.045em] text-forest md:text-[5.2rem]">
+            Every product has a story.
           </h1>
-          <p className="mt-5 max-w-lg text-lg text-slate-600">
-            TraceRoot records each batch from its origin to the shelf — every handoff signed by both sides, every split accounted for, every recall impossible to hide.
+          <p className="mt-6 max-w-md text-lg text-slate-600">
+            TraceRoot follows a batch from the farm to the shelf. Every handoff is signed by both sides, every split must add up, and a recall reaches every branch.
           </p>
           <div className="mt-8"><Lookup /></div>
-          <div className="mt-5 flex flex-wrap gap-3 text-sm">
-            <Link href="/explorer" className="inline-flex items-center gap-1.5 font-medium text-forest underline-offset-4 hover:underline">Browse all batches <ArrowRight size={14} /></Link>
-            <span className="text-paper-300">|</span>
-            <a href={githubUrl} target="_blank" rel="noreferrer" className="text-slate-600 hover:text-forest">View source</a>
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+            <Link href="/explorer" className="text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest">Browse all batches</Link>
+            <a href={githubUrl} target="_blank" rel="noreferrer" className="text-slate-600 underline decoration-transparent underline-offset-4 hover:text-forest hover:decoration-forest/30">Read the source</a>
           </div>
         </div>
-        <div className="grain relative rounded-2xl border border-paper-300 bg-paper-200/60 p-6">
-          <p className="mb-5 font-mono text-[11px] uppercase tracking-[.2em] text-forest-500">Trace every batch · verify every handoff</p>
-          <Journey />
-        </div>
+        <RootTree />
       </section>
 
       <section>
-        <h2 className="font-display text-3xl font-semibold text-forest">The problem with paper trails</h2>
-        <div className="mt-6 grid gap-6 md:grid-cols-3">
-          {[
-            ["Origin claims are easy to fake", "A label can say anything. Without a shared record, buyers just have to trust the last seller."],
-            ["Recalls are slow and partial", "When a batch is split across distributors, finding every affected lot can take days."],
-            ["Value is invisible", "Producers rarely see what their goods sell for downstream, so the chain stays opaque."],
-          ].map(([t, d]) => (
-            <div key={t} className="border-l-2 border-lime-600 pl-4">
-              <p className="font-medium text-forest">{t}</p>
-              <p className="mt-1 text-sm text-slate-600">{d}</p>
-            </div>
+        <h2 className="max-w-lg font-display text-4xl font-[750] leading-[1.05] tracking-[-0.035em] text-forest">How a batch moves</h2>
+        <ol className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map(([t, d], i) => (
+            <li key={t} className="relative pt-12">
+              <span className="absolute left-0 top-0 font-display text-4xl font-[750] leading-none text-lime-600" aria-hidden>{i + 1}</span>
+              <p className="font-semibold text-forest">{t}</p>
+              <p className="mt-1.5 text-[15px] text-slate-600">{d}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      <section>
-        <h2 className="font-display text-3xl font-semibold text-forest">What the contract guarantees</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, t, d }) => (
-            <div key={t} className="rounded-xl border border-paper-300 bg-white/60 p-5">
-              <Icon size={20} className="text-forest-500" />
-              <p className="mt-3 font-medium text-forest">{t}</p>
-              <p className="mt-1 text-sm text-slate-600">{d}</p>
-            </div>
-          ))}
+      <section className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
+        <div>
+          <h2 className="font-display text-4xl font-[750] leading-[1.05] tracking-[-0.035em] text-forest">The rules live in the contract</h2>
+          <p className="mt-4 max-w-sm text-slate-600">
+            The website can&apos;t bend them. Every permission and every quantity check runs on the blockchain, so a modified app gets rejected too.
+          </p>
         </div>
+        <ul className="grid gap-x-10 sm:grid-cols-2">
+          {GUARANTEES.map(({ icon: Icon, t, d }) => (
+            <li key={t} className="flex gap-4 border-t border-paper-300 py-6">
+              <Icon size={22} strokeWidth={1.8} className="mt-0.5 shrink-0 text-forest-500" />
+              <div>
+                <p className="font-semibold text-forest">{t}</p>
+                <p className="mt-1 text-[15px] text-slate-600">{d}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="rounded-2xl bg-forest p-8 text-paper md:p-12">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <h2 className="font-display text-3xl font-semibold">Honest about its limits</h2>
-            <p className="mt-3 text-paper/80">
-              A blockchain proves <em>who signed what, and when</em>. It cannot see inside a sack of rice. TraceRoot makes fraud harder — two-party handoffs, quantity conservation, inspector records — but inspections and prices are declarations by accountable participants, not physical proof.
-            </p>
-          </div>
-          <div className="flex flex-col justify-center gap-4">
-            <p className="text-sm text-paper/70">Have a batch number from a label?</p>
-            <Lookup dark />
-          </div>
+      <section className="grid gap-8 rounded-2xl border border-paper-300 bg-white p-6 shadow-lift md:grid-cols-[1.2fr_1fr] md:items-center md:p-12 [&>*]:min-w-0">
+        <div>
+          <h2 className="font-display text-3xl font-[750] tracking-[-0.03em] text-forest">What it can and can&apos;t prove</h2>
+          <p className="mt-3 text-slate-600">
+            A blockchain proves who signed what, and when. It can&apos;t look inside a sack of rice. TraceRoot makes fraud harder and recalls faster, but inspections and prices are declarations by named participants, not lab results.
+          </p>
+        </div>
+        <div>
+          <p className="mb-3 text-sm font-medium text-slate">Have a label in your hand?</p>
+          <Lookup />
         </div>
       </section>
     </div>

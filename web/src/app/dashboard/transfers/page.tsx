@@ -45,12 +45,12 @@ export default function Transfers() {
       </div>
 
       <div className="space-y-5">
-        <h2 className="font-display text-xl text-forest">Incoming</h2>
+        <h2 className="font-display text-xl font-[650] tracking-tight text-forest">Incoming</h2>
         {incoming.length ? incoming.map((b) => (
           <Action key={b.id.toString()} title={`#${b.id} · ${b.product}`} desc={`${b.quantity} ${b.unit} from ${short(b.custodian)}${b.pending!.price > 0n ? ` · ${inr(b.pending!.price)}` : ""} · expires ${dateTime(b.pending!.expiresAt)}`}
             fn="acceptTransfer" cta="Confirm receipt" build={() => [b.id]} />
         )) : <Empty title="No incoming offers" />}
-        <h2 className="font-display text-xl text-forest">Outgoing</h2>
+        <h2 className="font-display text-xl font-[650] tracking-tight text-forest">Outgoing</h2>
         {outgoing.length ? outgoing.map((b) => (
           <Action key={b.id.toString()} title={`#${b.id} · ${b.product}`} desc={`Offered to ${short(b.pending!.to)} · waiting for acceptance`}
             fn="cancelTransfer" cta="Withdraw offer" variant="danger" build={() => [b.id]} />
