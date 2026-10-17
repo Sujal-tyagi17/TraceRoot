@@ -39,18 +39,18 @@ export default function Home() {
             <span className="h-1.5 w-1.5 rounded-full bg-forest-500" aria-hidden /> Running on {networkLabel}
           </p>
           <HeroTitle />
-          <p className="enter mt-6 max-w-[34rem] text-lg text-slate-600" style={{ ["--d" as string]: "0.5s" }}>
+          <p className="enter mt-6 max-w-[34rem] text-lg text-slate-600" style={{ ["--d" as string]: "0.4s" }}>
             Trace a product from its origin to its destination. Follow every handoff, inspect its history, and see how each batch moves through the supply chain.
           </p>
-          <div className="enter mt-7 flex flex-wrap gap-3" style={{ ["--d" as string]: "0.62s" }}>
+          <div className="enter mt-7 flex flex-wrap gap-3" style={{ ["--d" as string]: "0.48s" }}>
             <Link href="/explorer" className="press inline-flex items-center rounded-full bg-forest px-6 py-3 text-[15px] font-semibold text-paper hover:bg-forest-700">Explore batches</Link>
             <a href="#how" className="press inline-flex items-center gap-2 rounded-full border border-paper-300 bg-white px-6 py-3 text-[15px] font-semibold text-forest hover:bg-paper-200">See how it works <ArrowDown size={16} aria-hidden /></a>
           </div>
-          <div className="enter mt-8" style={{ ["--d" as string]: "0.72s" }}>
+          <div className="enter mt-8" style={{ ["--d" as string]: "0.56s" }}>
             <p className="mb-2 text-sm font-medium text-slate">Have a product label? Trace it.</p>
             <Lookup />
           </div>
-          <p className="enter mt-1 max-w-md text-sm text-slate-600" style={{ ["--d" as string]: "0.8s" }}>
+          <p className="enter mt-1 max-w-md text-sm text-slate-600" style={{ ["--d" as string]: "0.62s" }}>
             Recorded on-chain: who created the batch, every handoff and declared price, splits, inspections and recalls.
           </p>
         </div>

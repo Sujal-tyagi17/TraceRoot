@@ -60,7 +60,7 @@ export function RootTree() {
         onMouseEnter={() => setHover(n.id)} onMouseLeave={() => setHover(null)}
         onFocus={() => setHover(n.id)} onBlur={() => setHover(null)}
         className="grow-node cursor-pointer outline-none [&:focus-visible>rect.ring]:opacity-100"
-        style={{ ["--d" as string]: `${0.1 + d * 0.32}s`, transformOrigin: `${p.x}px ${p.y}px`, transformBox: "view-box" }}>
+        style={{ ["--d" as string]: `${0.1 + d * 0.18}s`, transformOrigin: `${p.x}px ${p.y}px`, transformBox: "view-box" }}>
         <g className="flow" style={{ opacity: lit(n.id) ? 1 : 0.32, ["--fd" as string]: recalled ? `${d * 0.18}s` : "0s" }}>
           <rect className="ring opacity-0 transition-opacity" x={p.x - NW / 2 - 5} y={p.y - NH / 2 - 5} width={NW + 10} height={NH + 10} rx={(NH + 10) / 2} fill="none" stroke={PAPER} strokeWidth="2" />
           <rect className="flow" x={p.x - NW / 2} y={p.y - NH / 2} width={NW} height={NH} rx={NH / 2}
@@ -92,11 +92,11 @@ export function RootTree() {
           return (
             <path key={p + c} d={edge(p, c)} fill="none" strokeWidth={on && lineage ? 3 : 2.4} strokeLinecap="round"
               className="grow-path flow" stroke={red ? CORAL : on && lineage ? LIME : LIME2} strokeOpacity={on ? 1 : 0.25}
-              style={{ ["--len" as string]: 160, ["--d" as string]: `${depthOf(p) * 0.32}s`, ["--fd" as string]: recalled ? `${depthOf(p) * 0.18}s` : "0s" }} />
+              style={{ ["--len" as string]: 160, ["--d" as string]: `${depthOf(p) * 0.18}s`, ["--fd" as string]: recalled ? `${depthOf(p) * 0.18}s` : "0s" }} />
           );
         })}
-        <path d={`M${POS.trader.x},${POS.trader.y + NH / 2} V${BADGE.y - 13}`} stroke={recalled ? CORAL : LIME2} strokeWidth="2.4" className="grow-path flow" style={{ ["--len" as string]: 30, ["--d" as string]: "0.6s" }} />
-        <g className="grow-node" style={{ ["--d" as string]: "0.85s" }}>
+        <path d={`M${POS.trader.x},${POS.trader.y + NH / 2} V${BADGE.y - 13}`} stroke={recalled ? CORAL : LIME2} strokeWidth="2.4" className="grow-path flow" style={{ ["--len" as string]: 30, ["--d" as string]: "0.36s" }} />
+        <g className="grow-node" style={{ ["--d" as string]: "0.5s" }}>
           <rect x={BADGE.x - 82} y={BADGE.y - 13} width="164" height="26" rx="13" fill={recalled ? CORAL_DEEP : PAPER} stroke={recalled ? CORAL : "none"} className="flow" />
           <text x={BADGE.x} y={BADGE.y + 4.5} textAnchor="middle" fontSize="13" fontWeight={650} fill={recalled ? CORAL : DEEP} className="flow">{CONSERVATION}</text>
         </g>
