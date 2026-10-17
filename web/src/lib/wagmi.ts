@@ -1,0 +1,9 @@
+import { createConfig, http, injected } from "wagmi";
+import { chain, rpcUrl } from "./config";
+
+export const wagmiConfig = createConfig({
+  chains: [chain],
+  connectors: [injected()],
+  transports: { [chain.id]: http(rpcUrl) },
+  ssr: true,
+});
