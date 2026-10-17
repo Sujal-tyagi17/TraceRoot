@@ -18,3 +18,10 @@ export const useRoles = (a?: Address) =>
 
 export const useAncestors = (b?: Awaited<ReturnType<typeof getBatch>>) =>
   useQuery({ queryKey: ["ancestors", b?.id.toString()], queryFn: () => getAncestors(b!), enabled: !!b && b.parents.length > 0 });
+
+export const useChildren = (b?: Awaited<ReturnType<typeof getBatch>>) =>
+  useQuery({
+    queryKey: ["children", b?.id.toString(), b?.children.length],
+    queryFn: () => Promise.all(b!.children.map(getBatch)),
+    enabled: !!b && b.children.length > 0,
+  });

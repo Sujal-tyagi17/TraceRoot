@@ -2,12 +2,15 @@
 import Link from "next/link";
 import { use } from "react";
 import { AlertOctagon, MapPin, Package, User } from "lucide-react";
-import { useAncestors, useBatch, useHistory } from "@/lib/hooks";
+import { useAncestors, useBatch, useChildren, useHistory } from "@/lib/hooks";
 import { addrLink, isConfigured } from "@/lib/config";
 import { date, inr, short } from "@/lib/format";
 import { Card, Empty, ErrorBox, NotConfigured, Spinner, StatusPill } from "@/components/ui";
 import { Timeline } from "@/components/Timeline";
 import { Qr } from "@/components/Qr";
+
+const chip = (recalled: boolean) =>
+  `rounded-lg border px-2.5 py-1 font-mono ${recalled ? "border-alert/40 bg-alert-soft text-alert" : "border-paper-300 bg-paper"}`;
 
 export default function BatchPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: raw } = use(params);
@@ -16,6 +19,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
   const batch = useBatch(id);
   const hist = useHistory(id);
   const anc = useAncestors(batch.data);
+  const kids = useChildren(batch.data);
 
   if (!isConfigured) return <NotConfigured />;
   if (!valid) return <Empty title="That is not a batch number" />;
@@ -76,15 +80,19 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
               <span key={i} className="flex items-center gap-2">
                 <span className="flex flex-wrap gap-1">
                   {gen.map((a) => (
-                    <Link key={a.id.toString()} href={`/batch/${a.id}`} className={`rounded-lg border px-2.5 py-1 font-mono ${a.recalled ? "border-alert/40 bg-alert-soft text-alert" : "border-paper-300 bg-paper"}`}>#{a.id.toString()}</Link>
+                    <Link key={a.id.toString()} href={`/batch/${a.id}`} title={a.inheritedRecall ? "Under recall" : undefined} className={chip(a.inheritedRecall)}>#{a.id.toString()}</Link>
                   ))}
                 </span>
                 <span className="text-slate-400">→</span>
               </span>
             ))}
-            <span className="rounded-lg bg-forest px-2.5 py-1 font-mono text-lime">#{b.id.toString()}</span>
+            <span aria-current="page" className={`rounded-lg px-2.5 py-1 font-mono ${b.inheritedRecall ? "bg-alert text-white" : "bg-forest text-lime"}`}>#{b.id.toString()}</span>
             {b.children.length > 0 && <span className="text-slate-400">→</span>}
-            {b.children.map((c) => <Link key={c.toString()} href={`/batch/${c}`} className="rounded-lg border border-paper-300 bg-paper px-2.5 py-1 font-mono">#{c.toString()}</Link>)}
+            {b.children.map((c) => {
+              const k = kids.data?.find((x) => x.id === c);
+              const r = k?.inheritedRecall ?? false;
+              return <Link key={c.toString()} href={`/batch/${c}`} title={r ? "Under recall" : undefined} className={chip(r)}>#{c.toString()}</Link>;
+            })}
           </div>
           {b.parents.length > 0 && <p className="mt-3 text-xs text-slate-400">Earlier handoffs happened on ancestor batches — open them to see the full journey from origin.</p>}
         </Card>
