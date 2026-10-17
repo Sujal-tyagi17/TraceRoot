@@ -14,7 +14,7 @@ export default function Batches() {
   const [sold, setSold] = useState({ id: "", price: "" });
 
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div className="stagger grid gap-5 lg:grid-cols-2">
       <Action title="Create a batch" desc="Register a new lot at its origin." fn="createBatch" cta="Create batch"
         allowed={can.createBatch}
         build={() => {

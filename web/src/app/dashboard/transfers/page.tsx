@@ -16,7 +16,7 @@ export default function Transfers() {
   const incoming = (data ?? []).filter((b) => b.pending?.to.toLowerCase() === me);
 
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div className="stagger grid gap-5 lg:grid-cols-2">
       <div className="space-y-5">
         <Action title="Offer a handoff" desc="Step 1 of 2. Custody only moves when the recipient accepts (offers expire after 7 days)."
           fn="proposeTransfer" cta="Send offer" build={() => [parseId(p.id), parseAddr(p.to), toPaise(p.price || "0")]}>

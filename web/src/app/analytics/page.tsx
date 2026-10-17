@@ -7,6 +7,7 @@ import { getHistory, rolesOf, type Batch, type RoleName } from "@/lib/traceroot"
 import { isConfigured } from "@/lib/config";
 import { inr } from "@/lib/format";
 import { Card, Empty, ErrorBox, NotConfigured, PageHeader, Spinner, inputCls } from "@/components/ui";
+import { Skel } from "@/components/Loader";
 
 const INK = "#173B2A";
 const GRID = "#DED7C4";
@@ -77,7 +78,14 @@ export default function Analytics() {
   const product = picked && products.includes(picked) ? picked : products[0];
 
   if (!isConfigured) return <><PageHeader eyebrow="Analytics" title="Supply chain analytics" /><NotConfigured /></>;
-  if (isLoading) return <Spinner />;
+  if (isLoading) return (
+    <div>
+      <PageHeader eyebrow="Analytics" title="Supply chain analytics" />
+      <div className="grid gap-5 md:grid-cols-2">
+        {[0, 1].map((i) => <Card key={i} className="space-y-4"><Skel className="h-4 w-40" /><div className="flex h-48 items-end gap-4">{["h-[55%]", "h-[90%]", "h-[35%]", "h-[70%]"].map((h) => <Skel key={h} className={`flex-1 rounded-b-none rounded-t-md ${h}`} />)}</div></Card>)}
+      </div>
+    </div>
+  );
   if (error) return <ErrorBox message={String(error)} />;
   const all = data ?? [];
 
@@ -98,7 +106,7 @@ export default function Analytics() {
         Computed in your browser from on-chain state and events. Prices are participant declarations.
       </PageHeader>
       {all.length === 0 ? <Empty title="No batches yet — analytics appear once activity starts" /> : (
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="stagger grid gap-5 md:grid-cols-2">
           <Card><p className="mb-1 font-medium text-forest">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /></Card>
           <Card><p className="mb-1 font-medium text-forest">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /></Card>
           <Card className="md:col-span-2">

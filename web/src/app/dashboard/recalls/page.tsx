@@ -16,7 +16,7 @@ export default function Recalls() {
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="stagger grid gap-5 lg:grid-cols-2">
         <Action title="Issue a recall" desc="Every batch split or merged from this one is flagged instantly, on-chain." fn="recallBatch" cta="Recall batch" variant="danger"
           allowed={can.recall}
           build={() => [parseId(r.id), need(r.reason)]}>

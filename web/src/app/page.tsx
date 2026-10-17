@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Handshake, Scale, Siren, ReceiptIndianRupee, GitBranch, ScanLine } from "lucide-react";
 import { Lookup } from "@/components/Lookup";
-import { RootTree } from "@/components/RootTree";
+import { HeroTitle, HeroTree } from "@/components/Hero";
+import { Reveal } from "@/components/Reveal";
 import { githubUrl } from "@/lib/config";
 
 const STEPS = [
@@ -25,55 +26,53 @@ export default function Home() {
     <div className="space-y-28 md:space-y-36">
       <section className="grid items-center gap-10 md:grid-cols-[1fr_1.05fr] md:gap-14 [&>*]:min-w-0">
         <div>
-          <h1 className="font-display text-[3.4rem] font-[750] leading-[.95] tracking-[-0.045em] text-forest md:text-[5.2rem]">
-            Every product has a story.
-          </h1>
-          <p className="mt-6 max-w-md text-lg text-slate-600">
+          <HeroTitle />
+          <p className="rise-in mt-6 max-w-md text-lg text-slate-600" style={{ ["--d" as string]: ".55s" }}>
             TraceRoot follows a batch from the farm to the shelf. Every handoff is signed by both sides, every split must add up, and a recall reaches every branch.
           </p>
-          <div className="mt-8"><Lookup /></div>
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+          <div className="rise-in mt-8" style={{ ["--d" as string]: ".7s" }}><Lookup /></div>
+          <div className="rise-in mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium" style={{ ["--d" as string]: ".8s" }}>
             <Link href="/explorer" className="text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest">Browse all batches</Link>
             <a href={githubUrl} target="_blank" rel="noreferrer" className="text-slate-600 underline decoration-transparent underline-offset-4 hover:text-forest hover:decoration-forest/30">Read the source</a>
           </div>
         </div>
-        <RootTree />
+        <HeroTree />
       </section>
 
       <section>
-        <h2 className="max-w-lg font-display text-4xl font-[750] leading-[1.05] tracking-[-0.035em] text-forest">How a batch moves</h2>
+        <Reveal><h2 className="max-w-lg font-display text-4xl font-[750] leading-[1.05] tracking-[-0.035em] text-forest">How a batch moves</h2></Reveal>
         <ol className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(([t, d], i) => (
-            <li key={t} className="relative pt-12">
+            <Reveal as="li" key={t} delay={i * 0.1} className="relative pt-12">
               <span className="absolute left-0 top-0 font-display text-4xl font-[750] leading-none text-lime-600" aria-hidden>{i + 1}</span>
               <p className="font-semibold text-forest">{t}</p>
               <p className="mt-1.5 text-[15px] text-slate-600">{d}</p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </section>
 
       <section className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
-        <div>
+        <Reveal>
           <h2 className="font-display text-4xl font-[750] leading-[1.05] tracking-[-0.035em] text-forest">The rules live in the contract</h2>
           <p className="mt-4 max-w-sm text-slate-600">
             The website can&apos;t bend them. Every permission and every quantity check runs on the blockchain, so a modified app gets rejected too.
           </p>
-        </div>
+        </Reveal>
         <ul className="grid gap-x-10 sm:grid-cols-2">
-          {GUARANTEES.map(({ icon: Icon, t, d }) => (
-            <li key={t} className="flex gap-4 border-t border-paper-300 py-6">
+          {GUARANTEES.map(({ icon: Icon, t, d }, i) => (
+            <Reveal as="li" key={t} delay={(i % 2) * 0.08 + Math.floor(i / 2) * 0.06} className="flex gap-4 border-t border-paper-300 py-6">
               <Icon size={22} strokeWidth={1.8} className="mt-0.5 shrink-0 text-forest-500" />
               <div>
                 <p className="font-semibold text-forest">{t}</p>
                 <p className="mt-1 text-[15px] text-slate-600">{d}</p>
               </div>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </section>
 
-      <section className="grid gap-8 rounded-2xl border border-paper-300 bg-white p-6 shadow-lift md:grid-cols-[1.2fr_1fr] md:items-center md:p-12 [&>*]:min-w-0">
+      <Reveal as="section" className="grid gap-8 rounded-2xl border border-paper-300 bg-white p-6 shadow-lift md:grid-cols-[1.2fr_1fr] md:items-center md:p-12 [&>*]:min-w-0">
         <div>
           <h2 className="font-display text-3xl font-[750] tracking-[-0.03em] text-forest">What it can and can&apos;t prove</h2>
           <p className="mt-3 text-slate-600">
@@ -84,7 +83,7 @@ export default function Home() {
           <p className="mb-3 text-sm font-medium text-slate">Have a label in your hand?</p>
           <Lookup />
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }

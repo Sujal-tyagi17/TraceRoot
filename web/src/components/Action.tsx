@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { getAddress } from "viem";
 import { useTx } from "@/lib/useTx";
 import { Button, Card, ErrorBox, TxStatus } from "./ui";
+import { RootLoader } from "./Loader";
 
 /** A form that builds contract args, sends the tx, and only reports success after confirmation. */
 export function Action({
@@ -42,7 +43,7 @@ export function Action({
         {children}
         {err && <ErrorBox message={err} />}
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant={variant} disabled={busy}>{busy ? "Working…" : cta}</Button>
+          <Button type="submit" variant={variant} disabled={busy}>{busy ? <><RootLoader size={16} label="Working" /> Working…</> : cta}</Button>
           <TxStatus state={state} />
         </div>
       </form>

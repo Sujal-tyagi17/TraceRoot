@@ -20,3 +20,49 @@ p { text-wrap: pretty; }
   @keyframes pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
   .flow { transition: stroke .45s ease, fill .45s ease, color .45s ease; transition-delay: var(--fd, 0s); }
 }
+
+/* ───────────── Motion system (all disabled under prefers-reduced-motion) ───────────── */
+@media (prefers-reduced-motion: no-preference) {
+  /* Splash */
+  .splash-root { stroke-dasharray: 40; stroke-dashoffset: 40; animation: grow .7s cubic-bezier(.6,.05,.3,1) forwards; animation-delay: var(--d, 0s); }
+  .splash-dot { opacity: 0; transform-box: fill-box; transform-origin: center; animation: pop .3s ease-out forwards; animation-delay: var(--d, 0s); }
+  .splash-letter { display: inline-block; opacity: 0; transform: translateY(.5em); animation: rise .5s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d, 0s); }
+  .splash-exit { animation: lift .75s cubic-bezier(.7,0,.2,1) forwards; }
+  @keyframes lift { to { transform: translateY(-100%); } }
+
+  /* Hero words + scroll reveals */
+  .word { display: inline-block; opacity: 0; transform: translateY(.45em); animation: rise .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d, 0s); }
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); transition-delay: var(--d, 0s); }
+  .reveal.in { opacity: 1; transform: none; }
+  .stagger > * { opacity: 0; animation: rise .55s cubic-bezier(.2,.8,.2,1) forwards; }
+  .stagger > *:nth-child(1) { animation-delay: .02s } .stagger > *:nth-child(2) { animation-delay: .08s }
+  .stagger > *:nth-child(3) { animation-delay: .14s } .stagger > *:nth-child(4) { animation-delay: .2s }
+  .stagger > *:nth-child(5) { animation-delay: .26s } .stagger > *:nth-child(6) { animation-delay: .32s }
+  .stagger > *:nth-child(n+7) { animation-delay: .38s }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* Loader: roots pulse downward in sequence */
+  .ld-root { stroke-dasharray: 40; animation: ldgrow 1.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  @keyframes ldgrow { 0% { stroke-dashoffset: 40; opacity: .25 } 45% { stroke-dashoffset: 0; opacity: 1 } 80%, 100% { stroke-dashoffset: 0; opacity: .25 } }
+  .ld-dot { transform-box: fill-box; transform-origin: center; animation: ldpulse 1.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  @keyframes ldpulse { 0%, 100% { transform: scale(.7); opacity: .35 } 50% { transform: scale(1.15); opacity: 1 } }
+
+  /* Skeleton shimmer */
+  .skel { position: relative; overflow: hidden; }
+  .skel::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent); animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+
+  /* Route progress bar */
+  .route-bar { transition: width .4s ease, opacity .3s ease .2s; }
+
+  /* Recall banner draws attention once */
+  .alarm { animation: alarm 1.2s ease-out 1; }
+  @keyframes alarm { 0% { box-shadow: 0 0 0 0 rgba(194,59,46,.55) } 100% { box-shadow: 0 0 0 18px rgba(194,59,46,0) } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .word, .splash-letter, .stagger > * { opacity: 1 !important; transform: none !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise-in { opacity: 0; transform: translateY(14px); animation: rise .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d, 0s); }
+}

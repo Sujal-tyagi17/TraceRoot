@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, ExternalLink, Loader2, PlugZap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ExternalLink, PlugZap } from "lucide-react";
 import type { ReactNode } from "react";
 import type { TxState } from "@/lib/useTx";
 import { txLink } from "@/lib/config";
 import type { Batch } from "@/lib/traceroot";
+import { RootLoader } from "./Loader";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-paper-300/80 bg-white p-6 shadow-lift ${className}`}>{children}</div>;
@@ -55,8 +56,13 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 export const inputCls =
   "w-full rounded-xl border border-paper-300 bg-paper/60 px-3.5 py-2.5 text-[15px] text-slate placeholder:text-slate-400 transition focus:border-forest-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-lime/60";
 
-export function Spinner({ label = "Loading from chain…" }: { label?: string }) {
-  return <div className="flex items-center gap-2 py-8 text-sm text-slate-600"><Loader2 className="animate-spin" size={16} /> {label}</div>;
+export function Spinner({ label = "Reading from the blockchain…" }: { label?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-3 py-12 text-sm text-slate-600">
+      <RootLoader label={label || "Loading"} />
+      {label && <span>{label}</span>}
+    </div>
+  );
 }
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
@@ -89,9 +95,9 @@ export function NotConfigured() {
 
 export function TxStatus({ state }: { state: TxState }) {
   if (state.phase === "idle") return null;
-  if (state.phase === "signing") return <p className="flex items-center gap-2 text-sm text-slate-600"><Loader2 size={14} className="animate-spin" /> Check your wallet…</p>;
+  if (state.phase === "signing") return <p className="flex items-center gap-2 text-sm text-slate-600"><RootLoader size={18} label="Waiting for wallet" /> Approve it in your wallet…</p>;
   if (state.phase === "pending")
-    return <p className="flex items-center gap-2 text-sm text-amber"><Loader2 size={14} className="animate-spin" /> Waiting for confirmation… <TxLink hash={state.hash} /></p>;
+    return <p className="flex items-center gap-2 text-sm text-amber"><RootLoader size={18} label="Confirming" /> Confirming on the blockchain… <TxLink hash={state.hash} /></p>;
   if (state.phase === "confirmed")
     return <p className="flex items-center gap-2 text-sm text-forest-500"><CheckCircle2 size={14} /> Confirmed on-chain. <TxLink hash={state.hash} /></p>;
   return <div className="space-y-1"><ErrorBox message={state.message} />{state.hash && <TxLink hash={state.hash} />}</div>;

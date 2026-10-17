@@ -3,14 +3,21 @@ import Link from "next/link";
 import { useBatches } from "@/lib/hooks";
 import { useDash } from "@/components/DashCtx";
 import { BatchRow } from "@/components/BatchRow";
-import { Card, Empty, ErrorBox, Spinner } from "@/components/ui";
+import { Card, Empty, ErrorBox } from "@/components/ui";
+import { RowSkeleton, Skel } from "@/components/Loader";
+import { CountUp } from "@/components/Reveal";
 import { Action } from "@/components/Action";
 import { inr, short } from "@/lib/format";
 
 export default function Overview() {
   const { address } = useDash();
   const { data, isLoading, error } = useBatches(200);
-  if (isLoading) return <Spinner />;
+  if (isLoading) return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => <Card key={i} className="space-y-3 p-5"><Skel className="h-3 w-24" /><Skel className="h-9 w-12" /></Card>)}</div>
+      <RowSkeleton rows={3} />
+    </div>
+  );
   if (error) return <ErrorBox message={String(error)} />;
   const all = data ?? [];
   const me = address?.toLowerCase();
@@ -24,7 +31,7 @@ export default function Overview() {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="stagger grid grid-cols-2 gap-3 md:grid-cols-4">
         {stats.map(([l, v]) => (
           <Card key={l} className="p-5">
             <p className="text-sm text-slate-600">{l}</p>
@@ -49,7 +56,7 @@ export default function Overview() {
           <h2 className="font-display text-2xl font-[750] tracking-tight text-forest">Batches you hold</h2>
           <Link href="/dashboard/batches" className="text-sm font-medium text-forest underline decoration-forest/30 underline-offset-4">Manage batches</Link>
         </div>
-        {mine.length ? <div className="space-y-2">{mine.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div> : <Empty title="Nothing in your custody">Create a batch or accept a handoff to get started.</Empty>}
+        {mine.length ? <div className="stagger space-y-2">{mine.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div> : <Empty title="Nothing in your custody">Create a batch or accept a handoff to get started.</Empty>}
       </section>
     </div>
   );

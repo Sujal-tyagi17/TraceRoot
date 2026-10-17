@@ -16,8 +16,8 @@ export default function Participants() {
       <PageHeader eyebrow="Directory" title="Participants">
         Wallets that have produced or held a batch. Only public wallet addresses and on-chain roles are shown — no personal data.
       </PageHeader>
-      {!isConfigured ? <NotConfigured /> : isLoading || roles.isLoading ? <Spinner /> : !addrs.length ? <Empty title="No participants have handled batches yet" /> : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {!isConfigured ? <NotConfigured /> : isLoading || roles.isLoading ? <Spinner label="Looking up participants…" /> : !addrs.length ? <Empty title="No participants have handled batches yet" /> : (
+        <div className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {(roles.data ?? []).map(({ a, r }) => {
             const held = (data ?? []).filter((b) => b.custodian === a && b.status === "Active").length;
             return (

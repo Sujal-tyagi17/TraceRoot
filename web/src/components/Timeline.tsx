@@ -39,7 +39,7 @@ function describe(e: TimelineEvent, self: bigint) {
 
 export function Timeline({ events, self }: { events: TimelineEvent[]; self: bigint }) {
   return (
-    <ol className="relative space-y-7 border-l-2 border-paper-300 pl-8">
+    <ol className="stagger relative space-y-7 border-l-2 border-paper-300 pl-8">
       {events.map((e) => {
         const Icon = ICON[e.kind];
         const x = describe(e, self)!;

@@ -18,7 +18,7 @@ export default function Admin() {
       <p className="text-sm text-slate-600">
         Contract <a className="font-mono underline" href={addrLink(contractAddress!)} target="_blank" rel="noreferrer">{contractAddress}</a> on {chain.name}.
       </p>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="stagger grid gap-5 lg:grid-cols-2">
         <GrantForm title="Grant a role" fn="grantRole" cta="Grant role" state={g} set={setG} allowed={isAdmin} opts={opts} />
         <GrantForm title="Revoke a role" fn="revokeRole" cta="Revoke role" state={rv} set={setRv} allowed={isAdmin} opts={opts} danger />
       </div>

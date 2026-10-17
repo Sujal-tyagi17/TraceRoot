@@ -18,6 +18,7 @@ function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: R
 }
 import { Timeline } from "@/components/Timeline";
 import { Qr } from "@/components/Qr";
+import { BatchSkeleton } from "@/components/Loader";
 
 const chip = (recalled: boolean) =>
   `rounded-lg border px-2.5 py-1 font-mono ${recalled ? "border-alert/40 bg-alert-soft text-alert" : "border-paper-300 bg-paper"}`;
@@ -33,7 +34,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
 
   if (!isConfigured) return <NotConfigured />;
   if (!valid) return <Empty title="That is not a batch number" />;
-  if (batch.isLoading) return <Spinner />;
+  if (batch.isLoading) return <BatchSkeleton />;
   if (batch.error) {
     const nf = /BatchNotFound/.test(String(batch.error));
     return nf ? <Empty title={`Batch #${raw} does not exist`}><Link href="/explorer" className="underline">Browse batches</Link></Empty> : <ErrorBox message={String(batch.error)} />;
@@ -45,7 +46,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
   return (
     <div className="space-y-8">
       {b.inheritedRecall && (
-        <div role="alert" className="flex gap-4 rounded-2xl bg-alert p-5 text-white shadow-lift">
+        <div role="alert" className="alarm rise-in flex gap-4 rounded-2xl bg-alert p-5 text-white shadow-lift">
           <AlertOctagon className="mt-0.5 shrink-0" />
           <div>
             <p className="font-display text-xl font-[650] tracking-tight">Do not use this product. It is under recall.</p>
@@ -58,7 +59,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
       )}
 
       {/* The batch as a produce tag: facts on the left, a perforated QR stub on the right. */}
-      <article className={`relative grid overflow-hidden rounded-2xl border bg-white shadow-lift md:grid-cols-[1fr_auto] ${b.inheritedRecall ? "border-alert/40" : "border-paper-300/80"}`}>
+      <article className={`rise-in relative grid overflow-hidden rounded-2xl border bg-white shadow-lift md:grid-cols-[1fr_auto] ${b.inheritedRecall ? "border-alert/40" : "border-paper-300/80"}`}>
         <div className="p-6 md:p-9">
           <div className="flex flex-wrap items-center gap-3">
             <span className={`rounded-full px-3 py-1 text-sm font-semibold ${b.inheritedRecall ? "bg-alert text-white" : "bg-forest text-lime"}`}>Batch #{b.id.toString()}</span>
@@ -88,7 +89,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
       {(b.parents.length > 0 || b.children.length > 0) && (
         <Card>
           <p className="mb-4 font-display text-xl font-[650] tracking-tight text-forest">Where it came from and where it went</p>
-          <div className="flex flex-wrap items-center gap-2 text-sm">
+          <div className="stagger flex flex-wrap items-center gap-2 text-sm">
             {anc.data?.map((gen, i) => (
               <span key={i} className="flex items-center gap-2">
                 <span className="flex flex-wrap gap-1">
@@ -113,7 +114,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
 
       <section>
         <h2 className="mb-6 font-display text-3xl font-[750] tracking-[-0.03em] text-forest">Journey</h2>
-        {hist.isLoading ? <Spinner label="Reconstructing history from events…" /> : hist.error ? <ErrorBox message={String(hist.error)} /> :
+        {hist.isLoading ? <Spinner label="Rebuilding the journey from blockchain events…" /> : hist.error ? <ErrorBox message={String(hist.error)} /> :
           <Timeline events={hist.data ?? []} self={b.id} />}
         <p className="mt-6 text-xs text-slate-400">Prices and inspection grades are declarations signed by the participant shown, not independent verification.</p>
       </section>

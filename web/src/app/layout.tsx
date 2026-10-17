@@ -3,6 +3,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { Splash } from "@/components/Splash";
+import { RouteProgress } from "@/components/RouteProgress";
 
 export const metadata: Metadata = {
   title: { default: "TraceRoot — Every Product Has a Story.", template: "%s · TraceRoot" },
@@ -20,6 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen">
+        <Splash />
+        <RouteProgress />
         <Providers>
           <Nav />
           <main className="mx-auto max-w-6xl px-5 pt-10 md:pt-14">{children}</main>

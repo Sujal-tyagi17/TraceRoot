@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { useBatches } from "@/lib/hooks";
 import { isConfigured } from "@/lib/config";
 import { BatchRow } from "@/components/BatchRow";
-import { Empty, ErrorBox, NotConfigured, PageHeader, Spinner, inputCls } from "@/components/ui";
+import { Empty, ErrorBox, NotConfigured, PageHeader, inputCls } from "@/components/ui";
+import { RowSkeleton } from "@/components/Loader";
 
 const FILTERS = ["All", "Active", "Sold", "Consumed", "Recalled"] as const;
 
@@ -34,13 +35,13 @@ export default function Explorer() {
             <input className={`${inputCls} md:max-w-xs`} placeholder="Search product, origin or #id" value={q} onChange={(e) => setQ(e.target.value)} />
             <div className="flex flex-wrap gap-1.5">
               {FILTERS.map((x) => (
-                <button key={x} onClick={() => setF(x)} className={`rounded-full px-3 py-1 text-xs ${f === x ? "bg-forest text-lime" : "bg-paper-200 text-slate-600"}`}>{x}</button>
+                <button key={x} onClick={() => setF(x)} className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${f === x ? "bg-forest text-paper" : "bg-white text-slate-600 ring-1 ring-paper-300 hover:text-forest"}`}>{x}</button>
               ))}
             </div>
           </div>
-          {isLoading ? <Spinner /> : error ? <ErrorBox message={`Could not read the chain: ${(error as Error).message}`} /> :
+          {isLoading ? <RowSkeleton rows={6} /> : error ? <ErrorBox message={`Could not read the chain: ${(error as Error).message}`} /> :
             rows.length === 0 ? <Empty title={data?.length ? "No batches match" : "No batches yet"}>{!data?.length && "Producers can create the first batch from the dashboard."}</Empty> :
-            <div className="space-y-2">{rows.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div>}
+            <div className="stagger space-y-2">{rows.map((b) => <BatchRow key={b.id.toString()} b={b} />)}</div>}
         </>
       )}
     </div>
