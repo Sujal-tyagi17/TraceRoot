@@ -38,12 +38,22 @@ async function main() {
   fs.writeFileSync(out, JSON.stringify(manifest, null, 2));
   console.log("Deployed:", manifest);
 
-  // Copy ABI + address into the web app
+  // Copy the ABI into the web app, but only when it actually changed, so routine
+  // local deploys don't leave a modified abi.json behind (e.g. line endings on Windows).
   const art = require("../artifacts/contracts/TraceRoot.sol/TraceRoot.json");
   const webDir = path.join(__dirname, "..", "..", "web", "src", "lib", "contract");
   fs.mkdirSync(webDir, { recursive: true });
-  fs.writeFileSync(path.join(webDir, "abi.json"), JSON.stringify(art.abi, null, 2));
-  fs.writeFileSync(path.join(webDir, `deployment.${network.name}.json`), JSON.stringify(manifest, null, 2));
+  const abiPath = path.join(webDir, "abi.json");
+  let current;
+  try { current = JSON.parse(fs.readFileSync(abiPath, "utf8")); } catch { current = undefined; }
+  if (JSON.stringify(current) === JSON.stringify(art.abi)) {
+    console.log("ABI unchanged; web/src/lib/contract/abi.json left as is.");
+  } else {
+    fs.writeFileSync(abiPath, JSON.stringify(art.abi, null, 2) + "\n");
+    console.log("ABI changed; updated web/src/lib/contract/abi.json (commit it).");
+  }
+  // Local deployments are throwaway, so only testnet manifests are copied for the site.
+  if (!local) fs.writeFileSync(path.join(webDir, `deployment.${network.name}.json`), JSON.stringify(manifest, null, 2));
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
