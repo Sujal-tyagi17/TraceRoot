@@ -7,7 +7,7 @@ import { Button, Card, ErrorBox, TxStatus } from "./ui";
 
 /** A form that builds contract args, sends the tx, and only reports success after confirmation. */
 export function Action({
-  title, desc, fn, build, children, cta, variant = "primary", allowed = true, deny,
+  title, desc, fn, build, children, cta, variant = "primary", allowed = true,
 }: {
   title: string;
   desc?: string;
@@ -17,12 +17,12 @@ export function Action({
   cta: string;
   variant?: "primary" | "danger";
   allowed?: boolean;
-  deny?: string;
 }) {
   const qc = useQueryClient();
   const { state, send } = useTx(() => qc.invalidateQueries());
   const [err, setErr] = useState<string>();
   const busy = state.phase === "signing" || state.phase === "pending";
+  if (!allowed) return null; // role-aware: forms you can't use are not shown
   return (
     <Card>
       <form
@@ -39,16 +39,12 @@ export function Action({
           <p className="font-display text-lg text-forest">{title}</p>
           {desc && <p className="text-sm text-slate-600">{desc}</p>}
         </div>
-        {!allowed ? <p className="rounded-lg bg-paper-200 px-3 py-2 text-sm text-slate-600">{deny ?? "Your wallet does not have the role for this action."}</p> : (
-          <>
-            {children}
-            {err && <ErrorBox message={err} />}
-            <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" variant={variant} disabled={busy}>{busy ? "Working…" : cta}</Button>
-              <TxStatus state={state} />
-            </div>
-          </>
-        )}
+        {children}
+        {err && <ErrorBox message={err} />}
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="submit" variant={variant} disabled={busy}>{busy ? "Working…" : cta}</Button>
+          <TxStatus state={state} />
+        </div>
       </form>
     </Card>
   );

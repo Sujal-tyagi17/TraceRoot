@@ -7,7 +7,7 @@ import { Empty, Field, inputCls } from "@/components/ui";
 import { dateTime, inr, short, toPaise } from "@/lib/format";
 
 export default function Transfers() {
-  const { address, has } = useDash();
+  const { address, can } = useDash();
   const { data } = useBatches(200);
   const [p, setP] = useState({ id: "", to: "", price: "" });
   const [cond, setCond] = useState({ id: "", t: "", h: "", note: "" });
@@ -28,7 +28,7 @@ export default function Transfers() {
         </Action>
 
         <Action title="Log a condition reading" desc="Transporters in custody can record temperature and humidity." fn="recordCondition" cta="Record reading"
-          allowed={has("TRANSPORTER")} deny="Only transporters can log condition readings."
+          allowed={can.logCondition}
           build={() => {
             const t = Math.round(Number(cond.t) * 10), h = Math.round(Number(cond.h) * 10);
             if (!Number.isFinite(t) || t < -32768 || t > 32767) throw new Error("Temperature looks invalid");

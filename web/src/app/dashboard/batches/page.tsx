@@ -6,18 +6,17 @@ import { Field, inputCls } from "@/components/ui";
 import { toPaise } from "@/lib/format";
 
 export default function Batches() {
-  const { has } = useDash();
+  const { can } = useDash();
   const [c, setC] = useState({ product: "", qty: "", unit: "kg", origin: "", date: "", cid: "" });
   const [split, setSplit] = useState({ id: "", parts: "" });
   const [merge, setMerge] = useState("");
   const [ev, setEv] = useState({ id: "", kind: "photo", cid: "" });
   const [sold, setSold] = useState({ id: "", price: "" });
-  const canSplit = has("PRODUCER") || has("TRADER") || has("RETAILER");
 
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <Action title="Create a batch" desc="Register a new lot at its origin." fn="createBatch" cta="Create batch"
-        allowed={has("PRODUCER")} deny="Only wallets with the Producer role can create batches."
+        allowed={can.createBatch}
         build={() => {
           if (!c.product.trim() || !c.origin.trim()) throw new Error("Product and origin are required");
           if (!c.date) throw new Error("Pick the production or harvest date");
@@ -36,7 +35,7 @@ export default function Batches() {
 
       <div className="space-y-5">
         <Action title="Split a batch" desc="The parent is fully consumed. Parts must add up exactly to its quantity — include any remainder as a part."
-          fn="splitBatch" cta="Split" allowed={canSplit} deny="Producers, traders and retailers can split batches they hold."
+          fn="splitBatch" cta="Split" allowed={can.splitMerge}
           build={() => {
             const parts = split.parts.split(/[,+\s]+/).filter(Boolean).map(parseQty);
             if (parts.length < 2) throw new Error("Enter at least two parts, e.g. 40, 60");
@@ -49,13 +48,13 @@ export default function Batches() {
         </Action>
 
         <Action title="Merge batches" desc="Combine 2–8 batches of the same product and unit that you hold."
-          fn="mergeBatches" cta="Merge" allowed={canSplit} deny="Producers, traders and retailers can merge batches they hold."
+          fn="mergeBatches" cta="Merge" allowed={can.splitMerge}
           build={() => [merge.split(/[,\s]+/).filter(Boolean).map((x) => parseId(x))]}>
           <Field label="Batch numbers" hint="e.g. 4, 7, 9"><input className={inputCls} value={merge} onChange={(e) => setMerge(e.target.value)} /></Field>
         </Action>
       </div>
 
-      <Action title="Attach evidence" desc="Add an IPFS CID (photo, invoice, transport doc) to a batch you hold." fn="addEvidence" cta="Attach"
+      <Action title="Attach evidence" allowed={can.addEvidence} desc="Add an IPFS CID (photo, invoice, transport doc) to a batch you hold." fn="addEvidence" cta="Attach"
         build={() => { if (!ev.cid.trim()) throw new Error("CID is required"); return [parseId(ev.id), ev.kind, ev.cid.trim()]; }}>
         <div className="grid grid-cols-[110px_1fr] gap-3">
           <Field label="Batch #"><input className={inputCls} value={ev.id} onChange={(e) => setEv({ ...ev, id: e.target.value })} /></Field>
@@ -69,7 +68,7 @@ export default function Batches() {
       </Action>
 
       <Action title="Mark as sold" desc="Final step for retailers. Sold batches cannot move again." fn="markSold" cta="Mark sold"
-        allowed={has("RETAILER")} deny="Only retailers can mark batches as sold."
+        allowed={can.markSold}
         build={() => [parseId(sold.id), toPaise(sold.price || "0")]}>
         <div className="grid grid-cols-[110px_1fr] gap-3">
           <Field label="Batch #"><input className={inputCls} value={sold.id} onChange={(e) => setSold({ ...sold, id: e.target.value })} /></Field>

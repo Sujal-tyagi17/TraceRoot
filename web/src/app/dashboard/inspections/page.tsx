@@ -6,12 +6,12 @@ import { Field, inputCls } from "@/components/ui";
 import { GRADE_LABEL } from "@/lib/format";
 
 export default function Inspections() {
-  const { has } = useDash();
+  const { can } = useDash();
   const [f, setF] = useState({ id: "", grade: "4", cid: "", notes: "" });
   return (
     <div className="max-w-xl">
       <Action title="Record an inspection" desc="Your wallet signs this record. It shows what you declared — it is not independent proof of physical quality."
-        fn="recordInspection" cta="Record inspection" allowed={has("INSPECTOR")} deny="Only wallets with the Inspector role can record inspections."
+        fn="recordInspection" cta="Record inspection" allowed={can.inspect}
         build={() => [parseId(f.id), Number(f.grade), f.cid.trim(), f.notes]}>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Batch #"><input className={inputCls} value={f.id} onChange={(e) => setF({ ...f, id: e.target.value })} /></Field>
