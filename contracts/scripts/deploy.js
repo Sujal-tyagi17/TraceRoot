@@ -32,7 +32,9 @@ async function main() {
     blockNumber: rc.blockNumber,
     deployedAt: new Date().toISOString(),
   };
-  const out = path.join(__dirname, "..", "deployments", `${network.name}.json`);
+  const outDir = path.join(__dirname, "..", "deployments");
+  fs.mkdirSync(outDir, { recursive: true });
+  const out = path.join(outDir, `${network.name}.json`);
   fs.writeFileSync(out, JSON.stringify(manifest, null, 2));
   console.log("Deployed:", manifest);
 
