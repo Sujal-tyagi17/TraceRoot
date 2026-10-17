@@ -39,7 +39,7 @@ export function Action({
         }}
       >
         <div>
-          <p className="font-display text-xl font-[650] tracking-tight text-forest">{title}</p>
+          <p className="font-display text-xl font-[650] tracking-tight text-ink">{title}</p>
           {desc && <p className="mt-1 text-sm text-slate-600">{desc}</p>}
         </div>
         {children}

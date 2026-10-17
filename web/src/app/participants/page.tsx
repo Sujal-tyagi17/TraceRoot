@@ -23,7 +23,7 @@ export default function Participants() {
             const held = (data ?? []).filter((b) => b.custodian === a && b.status === "Active").length;
             return (
               <Card key={a} className="p-4">
-                <ExplorerLink kind="address" value={a} className="font-mono text-sm text-forest underline">{short(a, 6)}</ExplorerLink>
+                <ExplorerLink kind="address" value={a} className="font-mono text-sm text-ink underline">{short(a, 6)}</ExplorerLink>
                 <div className="mt-2 flex flex-wrap gap-1">{r.length ? r.map((x) => <Pill key={x} tone="good">{ROLE_LABEL[x]}</Pill>) : <Pill>Role revoked</Pill>}</div>
                 <p className="mt-2 text-xs text-slate-600">{held} active batch{held === 1 ? "" : "es"} in custody</p>
               </Card>

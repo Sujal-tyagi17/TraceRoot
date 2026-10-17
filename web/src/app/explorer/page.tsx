@@ -6,6 +6,7 @@ import { isConfigured } from "@/lib/config";
 import { BatchRow } from "@/components/BatchRow";
 import { Button, Empty, ErrorBox, NotConfigured, PageHeader, inputCls } from "@/components/ui";
 import { RowSkeleton } from "@/components/Loader";
+import { ScanButton } from "@/components/QrScanner";
 
 const FILTERS = ["All", "Active", "In transfer", "Sold", "Split / merged", "Recalled"] as const;
 const SORTS = { newest: "Newest first", oldest: "Oldest first", qty: "Largest quantity", produced: "Recently produced" } as const;
@@ -45,9 +46,12 @@ export default function Explorer() {
 
   return (
     <div>
-      <PageHeader title="Every batch on TraceRoot">
-        Read straight from the smart contract. No wallet needed.
-      </PageHeader>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <PageHeader title="Every batch on TraceRoot">
+          Read straight from the smart contract. No wallet needed.
+        </PageHeader>
+        <ScanButton className="press mb-10 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary hover:bg-primary-hover" />
+      </div>
       {!isConfigured ? <NotConfigured /> : (
         <>
           <div className="mb-6 space-y-3">
@@ -73,7 +77,7 @@ export default function Explorer() {
             <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by status">
               {FILTERS.map((x) => (
                 <button key={x} onClick={() => { setF(x); setShown(PAGE); }} aria-pressed={f === x}
-                  className={`press rounded-full px-3.5 py-1.5 text-sm transition-colors ${f === x ? "bg-forest text-paper" : "bg-white text-slate-600 ring-1 ring-paper-300 hover:text-forest"}`}>{x}</button>
+                  className={`press rounded-full px-3.5 py-1.5 text-sm transition-colors ${f === x ? "bg-primary text-on-primary" : "bg-surface text-slate-600 ring-1 ring-paper-300 hover:text-ink"}`}>{x}</button>
               ))}
             </div>
           </div>
@@ -85,7 +89,7 @@ export default function Explorer() {
             </div>
           ) : rows.length === 0 ? (
             data?.length
-              ? <Empty title="No batches match these filters"><button onClick={reset} className="font-medium text-forest underline underline-offset-4">Clear filters</button></Empty>
+              ? <Empty title="No batches match these filters"><button onClick={reset} className="font-medium text-ink underline underline-offset-4">Clear filters</button></Empty>
               : <Empty title="No batches yet">Producers create the first batch from the dashboard to start tracking its journey.</Empty>
           ) : (
             <>

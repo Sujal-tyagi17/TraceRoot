@@ -74,8 +74,8 @@ export function RootTree() {
   };
 
   return (
-    <figure className="relative overflow-hidden rounded-2xl bg-forest p-4 text-paper shadow-lift sm:p-6">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-paper/70">
+    <figure className="relative overflow-hidden rounded-2xl bg-forest p-4 text-cream shadow-lift sm:p-6">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-cream/70">
         <span>Example network, not live data. Select a stage.</span>
         <ul className="flex flex-wrap gap-x-3 gap-y-1" aria-label="Legend">
           <li className="flex items-center gap-1.5"><span className="h-3 w-5 rounded-full border-[1.5px] border-lime bg-forest-900" />Stage</li>
@@ -85,17 +85,17 @@ export function RootTree() {
         </ul>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${HGT}`} className="w-full" role="group" aria-describedby="rt-desc" style={{ fontFamily: "'Instrument Sans', sans-serif" }}>
+      <svg viewBox={`0 0 ${W} ${HGT}`} className="w-full" role="group" aria-describedby="rt-desc" style={{ fontFamily: "var(--font-sans)" }}>
         {DEMO_EDGES.map(([p, c]) => {
           const red = recalled && recallTargets.has(c);
           const on = !lineage || (lineage.has(p) && lineage.has(c));
           return (
-            <path key={p + c} d={edge(p, c)} fill="none" strokeWidth={on && lineage ? 3 : 2.4} strokeLinecap="round"
+            <path key={p + c} d={edge(p, c)} pathLength={1} fill="none" strokeWidth={on && lineage ? 3 : 2.4} strokeLinecap="round"
               className="grow-path flow" stroke={red ? CORAL : on && lineage ? LIME : LIME2} strokeOpacity={on ? 1 : 0.25}
-              style={{ ["--len" as string]: 160, ["--d" as string]: `${depthOf(p) * 0.18}s`, ["--fd" as string]: recalled ? `${depthOf(p) * 0.18}s` : "0s" }} />
+              style={{ ["--len" as string]: 1, ["--d" as string]: `${depthOf(p) * 0.18}s`, ["--fd" as string]: recalled ? `${depthOf(p) * 0.18}s` : "0s" }} />
           );
         })}
-        <path d={`M${POS.trader.x},${POS.trader.y + NH / 2} V${BADGE.y - 13}`} stroke={recalled ? CORAL : LIME2} strokeWidth="2.4" className="grow-path flow" style={{ ["--len" as string]: 30, ["--d" as string]: "0.36s" }} />
+        <path d={`M${POS.trader.x},${POS.trader.y + NH / 2} V${BADGE.y - 13}`} pathLength={1} stroke={recalled ? CORAL : LIME2} strokeWidth="2.4" className="grow-path flow" style={{ ["--len" as string]: 1, ["--d" as string]: "0.36s" }} />
         <g className="grow-node" style={{ ["--d" as string]: "0.5s" }}>
           <rect x={BADGE.x - 82} y={BADGE.y - 13} width="164" height="26" rx="13" fill={recalled ? CORAL_DEEP : PAPER} stroke={recalled ? CORAL : "none"} className="flow" />
           <text x={BADGE.x} y={BADGE.y + 4.5} textAnchor="middle" fontSize="13" fontWeight={650} fill={recalled ? CORAL : DEEP} className="flow">{CONSERVATION}</text>
@@ -115,15 +115,15 @@ export function RootTree() {
         </div>
       ) : (
         <div className="mt-3 min-h-[68px] rounded-xl bg-forest-900/70 p-3.5 text-sm" aria-live="polite">
-          {sel ? (<><p className="font-semibold text-lime">{sel.label} <span className="font-normal text-paper/70">{sel.sub}</span></p><p className="mt-0.5 text-paper/80">{sel.desc}</p></>)
-            : <p className="text-paper/70">Select any stage to see what is recorded there. Hover or focus one to trace its lineage.</p>}
+          {sel ? (<><p className="font-semibold text-lime">{sel.label} <span className="font-normal text-cream/70">{sel.sub}</span></p><p className="mt-0.5 text-cream/80">{sel.desc}</p></>)
+            : <p className="text-cream/70">Select any stage to see what is recorded there. Hover or focus one to trace its lineage.</p>}
         </div>
       )}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-paper/60">Every split adds up: {CONSERVATION}.</p>
+        <p className="text-xs text-cream/60">Every split adds up: {CONSERVATION}.</p>
         <button type="button" onClick={() => { setRecalled(!recalled); setSelected(null); }}
-          className={`press inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${recalled ? "bg-paper/10 text-paper hover:bg-paper/20" : "bg-lime text-forest hover:bg-lime-600"}`}>
+          className={`press inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${recalled ? "bg-paper/10 text-cream hover:bg-paper/20" : "bg-lime text-forest hover:bg-lime-600"}`}>
           {recalled ? <><RotateCcw size={15} /> Reset the example</> : <><Siren size={15} /> Recall the source</>}
         </button>
       </div>

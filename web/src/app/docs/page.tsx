@@ -5,7 +5,7 @@ export const metadata = { title: "Docs" };
 
 const S = ({ id, t, children }: { id: string; t: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-24 space-y-3 border-t border-paper-300 pt-8">
-    <h2 className="font-display text-2xl font-[750] tracking-tight text-forest">{t}</h2>
+    <h2 className="font-display text-2xl font-[750] tracking-tight text-ink">{t}</h2>
     <div className="space-y-3 text-[16px] leading-relaxed text-slate-600">{children}</div>
   </section>
 );
@@ -21,7 +21,7 @@ export default function Docs() {
     <div className="grid gap-10 lg:grid-cols-[220px_1fr]">
       <nav aria-label="On this page" className="hidden lg:block">
         <ul className="sticky top-24 space-y-2 text-sm">
-          {TOC.map(([id, t]) => <li key={id}><a href={`#${id}`} className="text-slate-600 hover:text-forest">{t}</a></li>)}
+          {TOC.map(([id, t]) => <li key={id}><a href={`#${id}`} className="text-slate-600 hover:text-ink">{t}</a></li>)}
         </ul>
       </nav>
       <article className="max-w-2xl space-y-10">
@@ -34,7 +34,7 @@ export default function Docs() {
 
         <S id="scan" t="Checking a product">
           <ol className="list-decimal space-y-1 pl-5">
-            <li>Scan the QR code on the label with your phone camera, or type the batch number into the search on the <Link href="/" className="text-forest underline underline-offset-4">home page</Link>.</li>
+            <li>Scan the QR code on the label with your phone camera, or type the batch number into the search on the <Link href="/" className="text-ink underline underline-offset-4">home page</Link>.</li>
             <li>You&apos;ll see where it came from, who handled it, any inspections and declared prices, and whether it&apos;s under recall.</li>
             <li>A red banner saying &ldquo;Do not use this product&rdquo; means it, or a batch it came from, has been recalled.</li>
           </ol>
@@ -53,7 +53,7 @@ export default function Docs() {
             <li>Install MetaMask and connect it from the top right of the site. It will ask you to switch to the test network.</li>
             <li>Get free test tokens from a faucet to pay for transactions. No real money is involved.</li>
             <li>Ask the administrator to give your wallet a role: Producer, Trader, Transporter, Inspector or Retailer.</li>
-            <li>Open the <Link href="/dashboard" className="text-forest underline underline-offset-4">Dashboard</Link>. You&apos;ll only see the actions your role allows.</li>
+            <li>Open the <Link href="/dashboard" className="text-ink underline underline-offset-4">Dashboard</Link>. You&apos;ll only see the actions your role allows.</li>
           </ol>
         </S>
 

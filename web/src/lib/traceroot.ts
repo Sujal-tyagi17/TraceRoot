@@ -50,12 +50,25 @@ export async function batchCount(): Promise<number> {
   return Number(await read<bigint>("batchCount"));
 }
 
+/** Thrown when a batch number is beyond the last batch. Checked against batchCount, not error text. */
+export class BatchNotFoundError extends Error {
+  constructor(public id: bigint) { super(`BatchNotFound: batch #${id} does not exist`); this.name = "BatchNotFoundError"; }
+}
+
 export async function getBatch(id: bigint): Promise<Batch> {
-  const [b, effective, pending] = await Promise.all([
-    read<Record<string, unknown>>("getBatch", [id]),
-    read<boolean>("isRecalled", [id]),
-    read<[Address, bigint, bigint]>("pendingTransfer", [id]),
-  ]);
+  let parts: [Record<string, unknown>, boolean, [Address, bigint, bigint]];
+  try {
+    parts = await Promise.all([
+      read<Record<string, unknown>>("getBatch", [id]),
+      read<boolean>("isRecalled", [id]),
+      read<[Address, bigint, bigint]>("pendingTransfer", [id]),
+    ]);
+  } catch (e) {
+    // RPCs don't always decode the contract's custom error name, so decide "missing" from the count.
+    if (id === 0n || id > BigInt(await batchCount())) throw new BatchNotFoundError(id);
+    throw e;
+  }
+  const [b, effective, pending] = parts;
   const r = b as unknown as Omit<Batch, "id" | "status" | "inheritedRecall" | "pending"> & { status: number };
   return {
     ...r,

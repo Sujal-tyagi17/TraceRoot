@@ -50,7 +50,7 @@ export function Timeline({ events, self }: { events: TimelineEvent[]; self: bigi
             <span className={`absolute -left-[49px] grid h-8 w-8 place-items-center rounded-full ring-4 ring-paper ${bad ? "bg-alert text-white" : "bg-forest text-lime"}`}>
               <Icon size={14} />
             </span>
-            <p className={`font-semibold ${bad ? "text-alert" : "text-forest"}`}>{x.t}</p>
+            <p className={`font-semibold ${bad ? "text-danger" : "text-ink"}`}>{x.t}</p>
             {x.s && <p className="mt-0.5 text-[15px] text-slate-600">{x.s}</p>}
             <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
               <span>{dateTime(e.timestamp)}</span>

@@ -3,26 +3,32 @@ import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useBatches } from "@/lib/hooks";
 import { useState } from "react";
+import { useTheme } from "@/lib/theme";
 import { getHistory, rolesOf, type Batch, type RoleName } from "@/lib/traceroot";
 import { isConfigured } from "@/lib/config";
 import { inr } from "@/lib/format";
 import { Card, Empty, ErrorBox, NotConfigured, PageHeader, Spinner, inputCls } from "@/components/ui";
 import { Skel } from "@/components/Loader";
 
-const INK = "#173B2A";
-const GRID = "#DED7C4";
+/** Chart colours per theme (Recharts sets SVG attributes, which can't read CSS variables). */
+const CHART = {
+  light: { bar: "#173B2A", grid: "#D9E1D5", tick: "#4E5F56", axis: "#708077", tipBg: "#FFFFFF", tipText: "#1E2A24", cursor: "rgba(23,59,42,.06)" },
+  dark: { bar: "#A9DB63", grid: "#283C31", tick: "#AABBB2", axis: "#889B91", tipBg: "#111E17", tipText: "#E2EAE4", cursor: "rgba(212,245,165,.08)" },
+};
 
 function Chart({ data, x, y, fmt }: { data: Record<string, unknown>[]; x: string; y: string; fmt?: (v: number) => string }) {
+  const { dark } = useTheme();
+  const c = dark ? CHART.dark : CHART.light;
   return (
     <div className="h-56">
       <ResponsiveContainer>
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="28%">
-          <CartesianGrid vertical={false} stroke={GRID} strokeDasharray="2 4" />
-          <XAxis dataKey={x} tickLine={false} axisLine={{ stroke: GRID }} tick={{ fill: "#4A5664", fontSize: 12 }} interval={0} />
-          <YAxis tickLine={false} axisLine={false} tick={{ fill: "#7D8794", fontSize: 11 }} width={56} tickFormatter={fmt as never} />
-          <Tooltip cursor={{ fill: "rgba(23,59,42,.06)" }} formatter={(v) => [fmt ? fmt(Number(v)) : String(v), y === "n" ? "Batches" : y === "q" ? "Quantity" : "Per unit"]}
-            contentStyle={{ borderRadius: 10, border: `1px solid ${GRID}`, fontSize: 12 }} />
-          <Bar dataKey={y} fill={INK} radius={[4, 4, 0, 0]} maxBarSize={44} />
+          <CartesianGrid vertical={false} stroke={c.grid} strokeDasharray="2 4" />
+          <XAxis dataKey={x} tickLine={false} axisLine={{ stroke: c.grid }} tick={{ fill: c.tick, fontSize: 12 }} interval={0} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fill: c.axis, fontSize: 11 }} width={56} tickFormatter={fmt as never} />
+          <Tooltip cursor={{ fill: c.cursor }} formatter={(v) => [fmt ? fmt(Number(v)) : String(v), y === "n" ? "Batches" : y === "q" ? "Quantity" : "Per unit"]}
+            contentStyle={{ borderRadius: 10, border: `1px solid ${c.grid}`, fontSize: 12, background: c.tipBg, color: c.tipText }} itemStyle={{ color: c.tipText }} labelStyle={{ color: c.tipText }} />
+          <Bar dataKey={y} fill={c.bar} radius={[4, 4, 0, 0]} maxBarSize={44} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -86,7 +92,7 @@ export default function Analytics() {
       </div>
     </div>
   );
-  if (error) return <ErrorBox message={String(error)} />;
+  if (error) return <ErrorBox message="Couldn't read batches from the blockchain. The network may be busy, so reload to try again." />;
   const all = data ?? [];
 
   const statusRows = [
@@ -107,12 +113,12 @@ export default function Analytics() {
       </PageHeader>
       {all.length === 0 ? <Empty title="No batches yet — analytics appear once activity starts" /> : (
         <div className="stagger grid gap-5 md:grid-cols-2">
-          <Card><p className="mb-1 font-medium text-forest">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /><p className="mt-3 text-xs text-slate-400">Source: the current state of every batch in the contract.</p></Card>
-          <Card><p className="mb-1 font-medium text-forest">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /><p className="mt-3 text-xs text-slate-400">Source: quantities producers registered when creating each batch.</p></Card>
+          <Card><p className="mb-1 font-medium text-ink">Batches by status</p><p className="mb-3 text-xs text-slate-600">{all.length} batches</p><Chart data={statusRows} x="s" y="n" /><p className="mt-3 text-xs text-slate-400">Source: the current state of every batch in the contract.</p></Card>
+          <Card><p className="mb-1 font-medium text-ink">Quantity registered at origin</p><p className="mb-3 text-xs text-slate-600">Root batches only, so splits are not double-counted</p><Chart data={productRows} x="p" y="q" /><p className="mt-3 text-xs text-slate-400">Source: quantities producers registered when creating each batch.</p></Card>
           <Card className="md:col-span-2">
             <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="mb-1 font-medium text-forest">Declared price per unit at each stage</p>
+                <p className="mb-1 font-medium text-ink">Declared price per unit at each stage</p>
                 <p className="text-xs text-slate-600">
                   Average price paid to each kind of participant, from the {prices.data?.sampled ?? "…"} most recent batches. Shows how value grows from producer to shelf.
                   {prices.data?.avgTransit !== undefined && <> Average time from offer to acceptance: <b>{prices.data.avgTransit.toFixed(1)} h</b>.</>}

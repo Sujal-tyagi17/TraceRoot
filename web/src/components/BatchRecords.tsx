@@ -10,7 +10,7 @@ export function BatchRecords({ events, unit, quantity }: { events: TimelineEvent
   return (
     <div className="grid gap-5 md:grid-cols-2">
       <Card>
-        <h2 className="flex items-center gap-2 font-display text-xl font-[650] tracking-tight text-forest"><BadgeCheck size={19} className="text-forest-500" aria-hidden /> Quality records</h2>
+        <h2 className="flex items-center gap-2 font-display text-xl font-[650] tracking-tight text-ink"><BadgeCheck size={19} className="text-forest-500" aria-hidden /> Quality records</h2>
         {inspections.length === 0 ? <p className="mt-3 text-sm text-slate-600">No inspections recorded for this batch yet.</p> : (
           <ul className="mt-4 divide-y divide-paper-300">
             {inspections.map((e) => {
@@ -31,7 +31,7 @@ export function BatchRecords({ events, unit, quantity }: { events: TimelineEvent
         <p className="mt-4 text-xs text-slate-400">Grades are signed declarations by the inspector, not lab results.</p>
       </Card>
       <Card>
-        <h2 className="flex items-center gap-2 font-display text-xl font-[650] tracking-tight text-forest"><ReceiptIndianRupee size={19} className="text-forest-500" aria-hidden /> Declared prices</h2>
+        <h2 className="flex items-center gap-2 font-display text-xl font-[650] tracking-tight text-ink"><ReceiptIndianRupee size={19} className="text-forest-500" aria-hidden /> Declared prices</h2>
         {prices.length === 0 ? <p className="mt-3 text-sm text-slate-600">No prices were declared for this batch.</p> : (
           <table className="mt-4 w-full text-sm">
             <thead><tr className="text-left text-slate-400"><th className="pb-2 font-medium">Step</th><th className="pb-2 font-medium">Whole batch</th><th className="pb-2 font-medium">Per {unit}</th></tr></thead>

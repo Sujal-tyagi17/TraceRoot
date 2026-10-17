@@ -31,14 +31,14 @@ const H: Layout = {
   node: { origin: { x: 104, y: 205 }, producer: { x: 252, y: 210 }, trader: { x: 400, y: 210 }, lotB: { x: 550, y: 120 }, lotC: { x: 550, y: 300 },
     transporter: { x: 700, y: 120 }, inspector: { x: 700, y: 300 }, shopA: { x: 850, y: 120 }, shopB: { x: 850, y: 300 } },
   w: 122,
-  badge: { x: 400, y: 272 },
+  badge: { x: 550, y: 210 },
   flow: "side",
 };
 const V: Layout = {
-  view: [360, 560],
+  view: [360, 540],
   logo: { from: { x: 180, y: 170, s: 2.1 }, to: { x: 180, y: 52, s: 0.9 } },
-  node: { origin: { x: 180, y: 52 }, producer: { x: 180, y: 140 }, trader: { x: 180, y: 212 }, lotB: { x: 98, y: 312 }, lotC: { x: 262, y: 312 },
-    transporter: { x: 98, y: 392 }, inspector: { x: 262, y: 392 }, shopA: { x: 98, y: 472 }, shopB: { x: 262, y: 472 } },
+  node: { origin: { x: 180, y: 52 }, producer: { x: 180, y: 140 }, trader: { x: 180, y: 212 }, lotB: { x: 98, y: 334 }, lotC: { x: 262, y: 334 },
+    transporter: { x: 98, y: 414 }, inspector: { x: 262, y: 414 }, shopA: { x: 98, y: 494 }, shopB: { x: 262, y: 494 } },
   w: 136,
   badge: { x: 180, y: 258 },
   flow: "bottom",
@@ -71,10 +71,10 @@ function Logo({ L }: { L: Layout }) {
     <g className="i-move" style={{ transform: `translate(${from.x}px, ${from.y}px) scale(${from.s})`, ["--tx" as string]: `${to.x}px`, ["--ty" as string]: `${to.y}px`, ["--ts" as string]: to.s, ["--at" as string]: "1.0s" }}>
       <circle className="i-glow" style={{ ["--at" as string]: "0.05s" }} cx="0" cy="-34" r="22" fill={LIME} />
       <circle className="i-ring" style={{ ["--at" as string]: "0.95s" }} cx="0" cy="0" r="16" fill="none" stroke={LIME} strokeWidth="1.2" />
-      <path className="i-draw" style={{ ["--at" as string]: "0.2s", ["--len" as string]: 30, ["--dur" as string]: "380ms" }} d="M0,-34 V-6" stroke={LIME} strokeWidth="3.2" strokeLinecap="round" fill="none" />
-      <path className="i-draw" style={{ ["--at" as string]: "0.48s", ["--len" as string]: 50 }} d="M0,-6 C0,6 -24,8 -24,24" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
-      <path className="i-draw" style={{ ["--at" as string]: "0.56s", ["--len" as string]: 40 }} d="M0,-6 V30" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
-      <path className="i-draw" style={{ ["--at" as string]: "0.64s", ["--len" as string]: 50 }} d="M0,-6 C0,6 24,8 24,24" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path className="i-draw" pathLength={1} style={{ ["--at" as string]: "0.2s", ["--len" as string]: 1, ["--dur" as string]: "380ms" }} d="M0,-34 V-6" stroke={LIME} strokeWidth="3.2" strokeLinecap="round" fill="none" />
+      <path className="i-draw" pathLength={1} style={{ ["--at" as string]: "0.48s", ["--len" as string]: 1 }} d="M0,-6 C0,6 -24,8 -24,24" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path className="i-draw" pathLength={1} style={{ ["--at" as string]: "0.56s", ["--len" as string]: 1 }} d="M0,-6 V30" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path className="i-draw" pathLength={1} style={{ ["--at" as string]: "0.64s", ["--len" as string]: 1 }} d="M0,-6 C0,6 24,8 24,24" stroke={LIME} strokeWidth="2.6" strokeLinecap="round" fill="none" />
       <circle className="i-pop" style={{ ["--at" as string]: "0s" }} cx="0" cy="-34" r="5" fill={LIME} />
       <circle className="i-pop" style={{ ["--at" as string]: "0.86s" }} cx="-24" cy="26" r="4.2" fill={PAPER} />
       <circle className="i-pop" style={{ ["--at" as string]: "0.92s" }} cx="0" cy="33" r="4.2" fill={PAPER} />
@@ -86,8 +86,12 @@ function Logo({ L }: { L: Layout }) {
 function Node({ n, L, compact }: { n: DemoNode; L: Layout; compact: boolean }) {
   const p = L.node[n.id];
   const child = n.kind === "child";
+  const from = L.node.trader;
+  const anim = child
+    ? { className: "i-split", style: { ["--at" as string]: `${edgeAt(n.id)}s`, ["--sx" as string]: `${from.x - p.x}px`, ["--sy" as string]: `${from.y - p.y}px`, transformOrigin: `${p.x}px ${p.y}px` } }
+    : { className: "i-pop", style: { ["--at" as string]: `${nodeAt(n.id)}s` } };
   return (
-    <g className="i-pop" style={{ ["--at" as string]: `${nodeAt(n.id)}s` }}>
+    <g {...anim}>
       <rect x={p.x - L.w / 2} y={p.y - NH / 2} width={L.w} height={NH} rx={NH / 2} fill={DEEP} stroke={LIME} strokeWidth={child ? 1.4 : 1.8} strokeDasharray={child ? "5 4" : undefined} />
       <text x={p.x} y={compact ? p.y - 3 : p.y - 4} textAnchor="middle" fontSize={compact ? 14 : 15} fontWeight={650} fill={LIME}>{n.label}</text>
       <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize={compact ? 11.5 : 12} fill={PAPER} fillOpacity=".75">{n.sub}</text>
@@ -105,18 +109,25 @@ function Network({ L, compact }: { L: Layout; compact: boolean }) {
   const bottom = route(L, ["origin", "producer", "trader", "lotC", "inspector", "shopB"]);
   const [w, h] = L.view;
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-auto w-full" aria-hidden style={{ fontFamily: "'Instrument Sans', sans-serif" }}>
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-auto w-full" aria-hidden style={{ fontFamily: "var(--font-sans)" }}>
       {DEMO_EDGES.map(([p, c]) => (
         <path key={p + c} d={edgePath(L, p, c)} fill="none" stroke={LIME} strokeWidth="2.5" strokeLinecap="round"
-          className="i-draw" style={{ ["--at" as string]: `${edgeAt(c)}s`, ["--len" as string]: 220, ["--dur" as string]: "300ms" }} />
+          className="i-draw" pathLength={1} style={{ ["--at" as string]: `${edgeAt(c)}s`, ["--len" as string]: 1, ["--dur" as string]: c === "lotB" || c === "lotC" ? "420ms" : "300ms" }} />
       ))}
       {/* edges flash as the pulse passes */}
       {DEMO_EDGES.map(([p, c]) => (
         <path key={"f" + p + c} d={edgePath(L, p, c)} fill="none" stroke={LIME} strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0"
           className="i-flash" style={{ ["--at" as string]: `${checkAt(c) - 0.1}s` }} />
       ))}
-      {/* Scene C: the conservation badge under the parent batch */}
-      <g className="i-pop" style={{ ["--at" as string]: "1.78s" }}>
+      {/* Scene D: verification pulses travel along the edges, passing behind the nodes */}
+      {[top, bottom].map((d, i) => (
+        <circle key={i} r="6" fill={LIME} opacity="0" style={{ filter: "drop-shadow(0 0 6px #D4F5A5)" }}>
+          <animateMotion dur="0.75s" begin="1.95s" fill="freeze" path={d} />
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1" dur="0.8s" begin="1.95s" fill="freeze" />
+        </circle>
+      ))}
+      {/* Scene C: once both child lots have landed, the conservation badge settles at the fork */}
+      <g className="i-pop" style={{ ["--at" as string]: "2.0s" }}>
         <rect x={L.badge.x - 76} y={L.badge.y - 12} width="152" height="24" rx="12" fill={LIME} />
         <text x={L.badge.x} y={L.badge.y + 4.5} textAnchor="middle" fontSize="12.5" fontWeight={650} fill={DEEP}>{CONSERVATION}</text>
       </g>
@@ -124,13 +135,6 @@ function Network({ L, compact }: { L: Layout; compact: boolean }) {
       <text className="i-fade" style={{ ["--at" as string]: "1.4s" }} x={L.flow === "side" ? L.node.origin.x : L.node.origin.x + 44} y={L.flow === "side" ? L.node.origin.y + 62 : L.node.origin.y + 6}
         textAnchor={L.flow === "side" ? "middle" : "start"} fontSize="12.5" fill={PAPER} fillOpacity=".75">Origin farm</text>
       <Logo L={L} />
-      {/* Scene D: verification pulses */}
-      {[top, bottom].map((d, i) => (
-        <circle key={i} r="6" fill={LIME} opacity="0" style={{ filter: "drop-shadow(0 0 6px #D4F5A5)" }}>
-          <animateMotion dur="0.75s" begin="1.95s" fill="freeze" path={d} />
-          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.85;1" dur="0.8s" begin="1.95s" fill="freeze" />
-        </circle>
-      ))}
     </svg>
   );
 }
@@ -196,13 +200,13 @@ export function OriginSequence() {
         <div className="hidden md:block"><Network L={H} compact={false} /></div>
         <div className="mx-auto max-w-[380px] md:hidden"><Network L={V} compact /></div>
       </div>
-      <p className="mt-2 font-display text-5xl font-[750] tracking-[-0.04em] text-paper md:text-6xl" aria-hidden>
+      <p className="mt-2 font-display text-5xl font-[750] tracking-[-0.04em] text-cream md:text-6xl" aria-hidden>
         {NAME.split("").map((c, i) => <span key={i} className="i-rise" style={{ ["--at" as string]: `${0.5 + i * 0.05}s` }}>{c}</span>)}
       </p>
       <p className="i-rise mt-2 text-sm text-lime/85 md:text-base" style={{ ["--at" as string]: "1.15s" }} aria-hidden>Every product has a story.</p>
-      <p className="i-fade absolute bottom-7 left-5 max-w-[50%] text-xs text-paper/50 md:left-6" style={{ ["--at" as string]: "1.9s" }} aria-hidden><span className="md:hidden">Illustration, not live data.</span><span className="hidden md:inline">An illustrated journey, not live blockchain data.</span></p>
+      <p className="i-fade absolute bottom-7 left-5 max-w-[50%] text-xs text-cream/50 md:left-6" style={{ ["--at" as string]: "1.9s" }} aria-hidden><span className="md:hidden">Illustration, not live data.</span><span className="hidden md:inline">An illustrated journey, not live blockchain data.</span></p>
       <button type="button" onClick={(e) => { e.stopPropagation(); skip(); }} autoFocus
-        className="absolute bottom-5 right-5 rounded-full border border-paper/25 px-4 py-2 text-sm font-medium text-paper/85 transition hover:bg-paper/10 focus-visible:outline-lime">
+        className="absolute bottom-5 right-5 rounded-full border border-paper/25 px-4 py-2 text-sm font-medium text-cream/85 transition hover:bg-paper/10 focus-visible:outline-lime">
         Skip intro
       </button>
     </div>

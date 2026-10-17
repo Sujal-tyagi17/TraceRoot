@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { isAddress, getAddress, type Address } from "viem";
-import { getBatch, rolesOf, ROLE_LABEL, type Batch } from "@/lib/traceroot";
+import { BatchNotFoundError, getBatch, rolesOf, ROLE_LABEL, type Batch } from "@/lib/traceroot";
 import { isConfigured } from "@/lib/config";
 
 function useDebounced<T>(v: T, ms = 350) {
@@ -18,7 +18,7 @@ const toId = (s: string) => { const x = s.trim().replace(/^#/, ""); return /^\d+
 export function useBatchLookup(raw: string) {
   const id = toId(useDebounced(raw));
   const q = useQuery({ queryKey: ["batch", id?.toString()], queryFn: () => getBatch(id!), enabled: isConfigured && id !== undefined, retry: false });
-  return { id, batch: q.data, loading: q.isFetching, missing: !!q.error && /BatchNotFound/.test(String(q.error)), error: q.error };
+  return { id, batch: q.data, loading: q.isFetching, missing: q.error instanceof BatchNotFoundError, error: q.error };
 }
 
 export function useRolesLookup(raw: string) {
@@ -31,7 +31,7 @@ export function useRolesLookup(raw: string) {
 export function Check({ ok, children }: { ok: boolean | null; children: React.ReactNode }) {
   if (ok === null) return <p className="text-sm text-slate-400">{children}</p>;
   return (
-    <p className={`flex items-start gap-1.5 text-sm ${ok ? "text-forest-500" : "text-alert"}`}>
+    <p className={`flex items-start gap-1.5 text-sm ${ok ? "text-forest-500" : "text-danger"}`}>
       {ok ? <CheckCircle2 size={15} className="mt-0.5 shrink-0" aria-hidden /> : <AlertCircle size={15} className="mt-0.5 shrink-0" aria-hidden />}
       <span>{children}</span>
     </p>

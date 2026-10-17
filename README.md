@@ -12,11 +12,26 @@ TraceRoot is a blockchain supply chain provenance platform. It records every bat
 | Contract | _add the explorer link from `contracts/deployments/amoy.json`_ |
 | Network | Polygon Amoy (chain 80002), configurable to Sepolia |
 
-![TraceRoot home page](docs/screenshots/home.png)
+| Light | Dark |
+|---|---|
+| ![TraceRoot home page, light theme](docs/screenshots/home.png) | ![TraceRoot home page, dark theme](docs/screenshots/home-dark.png) |
 
-| The Origin Sequence (opening animation) | Recall demo on the landing page | Batch page on a phone |
-|---|---|---|
-| ![Origin Sequence](docs/screenshots/origin-sequence.png) | ![Recall demo](docs/screenshots/recall-demo.png) | ![Mobile batch page](docs/screenshots/mobile.png) |
+| The Origin Sequence (opening animation) | Recall demo on the landing page |
+|---|---|
+| ![Origin Sequence](docs/screenshots/origin-sequence.png) | ![Recall demo](docs/screenshots/recall-demo.png) |
+
+| Recalled batch on a phone | In-site QR scanner |
+|---|---|
+| ![Mobile batch page](docs/screenshots/mobile.png) | ![QR scanner dialog](docs/screenshots/scanner.png) |
+
+_Screenshots are from a local Hardhat chain seeded with `npm run seed:local`. The scanner shot uses Chromium's built-in test camera pattern, not a real product label._
+
+### On the website
+
+- **Scan a label in the browser.** "Scan a QR code" opens the rear camera only when pressed, validates what it reads, asks before following a link to another site, and stops the camera on close or when you leave the page. Typing the batch number always works, including when camera access is denied. The camera needs HTTPS (or localhost).
+- **Light and dark themes.** Follows the device by default; the header toggle cycles device → light → dark and remembers the choice. The theme is applied before the first paint, so there is no flash.
+- **Self-hosted fonts** (Bricolage Grotesque, Instrument Sans, JetBrains Mono, all SIL OFL 1.1) loaded with `next/font/local`. No requests to font CDNs.
+- **Reduced motion respected.** The opening animation is skipped, and every other animation jumps to its end state.
 
 ## What the contract guarantees
 
@@ -84,8 +99,8 @@ The deploy script refuses to run on any chain except Amoy, Sepolia and local Har
 | Command | What it does |
 |---|---|
 | `web: npm run lint` | ESLint (Next.js core web vitals + TypeScript rules) |
-| `web: npm test` | 12 unit tests: example network lineage, role permissions, form parsers, error classification |
-| `web: npm run test:e2e` | 18 Playwright browser tests against a seeded local chain (see `web/tests/e2e/README.md`) |
+| `web: npm test` | 15 unit tests: example network lineage, role permissions, form parsers, error classification, QR content validation |
+| `web: npm run test:e2e` | 27 Playwright browser tests against a seeded local chain: dashboard roles, real transactions, intro, theme, and QR scanning with a simulated camera (see `web/tests/e2e/README.md`) |
 | `contracts: npm test` | 30 contract tests: roles, handoffs, expiry, split/merge conservation, recalls, lineage cap, event index |
 | `contracts: npm run coverage` | ≈99% line coverage |
 | `contracts: npm run slither` | Static analysis; see `docs/SECURITY.md` for triage |
@@ -94,7 +109,7 @@ The test suite includes a randomized split/merge invariant test showing total ac
 
 ## Tech stack
 
-Solidity 0.8.24 · OpenZeppelin 5 · Hardhat · Next.js 15 · TypeScript · Tailwind CSS · wagmi 2 · viem · Recharts · qrcode · GitHub Actions
+Solidity 0.8.24 · OpenZeppelin 5 · Hardhat · Next.js 15 · TypeScript · Tailwind CSS · wagmi 2 · viem · Recharts · qrcode · @zxing/browser · GitHub Actions
 
 ---
 

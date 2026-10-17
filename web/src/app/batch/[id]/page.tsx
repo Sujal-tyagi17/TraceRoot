@@ -7,7 +7,8 @@ import { useAncestors, useBatch, useChildren, useHistory } from "@/lib/hooks";
 import { isConfigured } from "@/lib/config";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { date, inr, short } from "@/lib/format";
-import { Card, Empty, ErrorBox, NotConfigured, Spinner, StatusPill } from "@/components/ui";
+import { Button, Card, Empty, ErrorBox, NotConfigured, Spinner, StatusPill } from "@/components/ui";
+import { BatchNotFoundError } from "@/lib/traceroot";
 
 function Fact({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
   return (
@@ -23,7 +24,7 @@ import { BatchSkeleton } from "@/components/Loader";
 import { BatchRecords } from "@/components/BatchRecords";
 
 const chip = (recalled: boolean) =>
-  `rounded-lg border px-2.5 py-1 font-mono ${recalled ? "border-alert/40 bg-alert-soft text-alert" : "border-paper-300 bg-paper"}`;
+  `rounded-lg border px-2.5 py-1 font-mono ${recalled ? "border-danger/40 bg-danger-soft text-danger" : "border-paper-300 bg-paper"}`;
 
 export default function BatchPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: raw } = use(params);
@@ -38,8 +39,13 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
   if (!valid) return <Empty title="That is not a batch number" />;
   if (batch.isLoading) return <BatchSkeleton />;
   if (batch.error) {
-    const nf = /BatchNotFound/.test(String(batch.error));
-    return nf ? <Empty title={`Batch #${raw} does not exist`}><Link href="/explorer" className="underline">Browse batches</Link></Empty> : <ErrorBox message={String(batch.error)} />;
+    if (batch.error instanceof BatchNotFoundError) return <Empty title={`Batch #${raw} does not exist`}>Check the number on the label, or <Link href="/explorer" className="font-medium text-ink underline underline-offset-4">browse all batches</Link>.</Empty>;
+    return (
+      <div className="space-y-3">
+        <ErrorBox message="Couldn't read this batch from the blockchain. The network may be busy." />
+        <Button variant="ghost" onClick={() => batch.refetch()}>Try again</Button>
+      </div>
+    );
   }
   const b = batch.data!;
   const recalledAncestor = anc.data?.flat().find((a) => a.recalled);
@@ -61,13 +67,13 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
       )}
 
       {/* The batch as a produce tag: facts on the left, a perforated QR stub on the right. */}
-      <article className={`rise-in relative grid overflow-hidden rounded-2xl border bg-white shadow-lift md:grid-cols-[1fr_auto] ${b.inheritedRecall ? "border-alert/40" : "border-paper-300/80"}`}>
+      <article className={`rise-in relative grid overflow-hidden rounded-2xl border bg-surface shadow-lift md:grid-cols-[1fr_auto] ${b.inheritedRecall ? "border-danger/40" : "border-paper-300/80"}`}>
         <div className="p-6 md:p-9">
           <div className="flex flex-wrap items-center gap-3">
             <span className={`rounded-full px-3 py-1 text-sm font-semibold ${b.inheritedRecall ? "bg-alert text-white" : "bg-forest text-lime"}`}>Batch #{b.id.toString()}</span>
             <StatusPill b={b} />
           </div>
-          <h1 className="mt-5 font-display text-[2.6rem] font-[750] leading-[1] tracking-[-0.04em] text-forest md:text-6xl">{b.product}</h1>
+          <h1 className="mt-5 font-display text-[2.6rem] font-[750] leading-[1] tracking-[-0.04em] text-ink md:text-6xl">{b.product}</h1>
           <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Fact icon={<Package size={15} />} label="Quantity" value={`${b.quantity.toString()} ${b.unit}`} />
             <Fact icon={<MapPin size={15} />} label="Origin" value={b.origin} />
@@ -90,7 +96,7 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
 
       {(b.parents.length > 0 || b.children.length > 0) && (
         <Card>
-          <p className="mb-4 font-display text-xl font-[650] tracking-tight text-forest">Where it came from and where it went</p>
+          <p className="mb-4 font-display text-xl font-[650] tracking-tight text-ink">Where it came from and where it went</p>
           <div className="stagger flex flex-wrap items-center gap-2 text-sm">
             {anc.data?.map((gen, i) => (
               <span key={i} className="flex items-center gap-2">
@@ -117,8 +123,8 @@ export default function BatchPage({ params }: { params: Promise<{ id: string }> 
       {hist.data && <BatchRecords events={hist.data} unit={b.unit} quantity={b.quantity} />}
 
       <section>
-        <h2 className="mb-6 font-display text-3xl font-[750] tracking-[-0.03em] text-forest">Journey</h2>
-        {hist.isLoading ? <Spinner label="Rebuilding the journey from blockchain events…" /> : hist.error ? <ErrorBox message={String(hist.error)} /> :
+        <h2 className="mb-6 font-display text-3xl font-[750] tracking-[-0.03em] text-ink">Journey</h2>
+        {hist.isLoading ? <Spinner label="Rebuilding the journey from blockchain events…" /> : hist.error ? <ErrorBox message="Couldn't load this batch's history right now. Reload the page to try again." /> :
           <Timeline events={hist.data ?? []} self={b.id} />}
         <p className="mt-6 text-xs text-slate-400">Prices and inspection grades are declarations signed by the participant shown, not independent verification.</p>
       </section>

@@ -18,7 +18,7 @@ export function Logo() {
   return (
     <span className="inline-flex items-center gap-2.5">
       <LogoMark />
-      <span className="font-display text-[1.35rem] font-[750] tracking-[-0.03em] text-forest">TraceRoot</span>
+      <span className="font-display text-[1.35rem] font-[750] tracking-[-0.03em] text-ink">TraceRoot</span>
     </span>
   );
 }

@@ -21,11 +21,11 @@ export function Connect() {
         <button
           onClick={() => c && connect({ connector: c })}
           disabled={!c || isPending}
-          className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-forest px-4 py-2 text-sm font-semibold text-paper hover:bg-forest-700 disabled:opacity-50"
+          className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50"
         >
           <Wallet size={15} /> {isPending ? "Connecting…" : <><span className="sm:hidden">Connect</span><span className="hidden sm:inline">Connect wallet</span></>}
         </button>
-        {error && <span className="mt-1 text-xs text-alert">{/not found|provider/i.test(error.message) ? "No browser wallet found — install MetaMask" : error.message.slice(0, 60)}</span>}
+        {error && <span className="mt-1 text-xs text-danger">{/not found|provider/i.test(error.message) ? "No browser wallet found — install MetaMask" : error.message.slice(0, 60)}</span>}
       </div>
     );
   }
@@ -37,7 +37,7 @@ export function Connect() {
     );
   }
   return (
-    <button onClick={() => disconnect()} title="Disconnect" className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-paper-300 bg-white px-3.5 py-2 font-mono text-xs text-forest hover:bg-paper-200">
+    <button onClick={() => disconnect()} title="Disconnect" className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-paper-300 bg-surface px-3.5 py-2 font-mono text-xs text-ink hover:bg-paper-200">
       <span className="h-2 w-2 rounded-full bg-lime-600" /> {short(address)}
     </button>
   );

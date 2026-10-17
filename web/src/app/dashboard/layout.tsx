@@ -41,9 +41,9 @@ export default function DashLayout({ children }: { children: ReactNode }) {
             <span className="text-sm text-slate-600">Signed in as</span>
             {roles.isLoading ? <span className="text-sm">…</span> : list.length ? list.map((r) => <Pill key={r} tone="good">{ROLE_LABEL[r]}</Pill>) : <Pill tone="warn">a wallet with no role yet. Ask the administrator to grant one.</Pill>}
           </div>
-          <nav className="mb-8 inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-paper-300 bg-white p-1">
+          <nav className="mb-8 inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-paper-300 bg-surface p-1">
             {tabs.map(({ href, label }) => (
-              <Link key={href} href={href} aria-current={path === href ? "page" : undefined} className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-colors ${path === href ? "bg-forest font-medium text-paper" : "text-slate-600 hover:text-forest"}`}>{label}</Link>
+              <Link key={href} href={href} aria-current={path === href ? "page" : undefined} className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-colors ${path === href ? "bg-primary font-medium text-on-primary" : "text-slate-600 hover:text-ink"}`}>{label}</Link>
             ))}
           </nav>
           {roles.isLoading ? <Spinner label="Checking your roles…" /> : blocked ? (

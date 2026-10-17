@@ -75,3 +75,20 @@ describe("transaction error classification", () => {
     expect(classify(new Error("execution reverted"))).toBe("reverted");
   });
 });
+
+import { parseScan } from "@/lib/scan";
+describe("QR scan parsing", () => {
+  const here = "https://traceroot.example";
+  it("accepts this site's batch links and bare numbers", () => {
+    expect(parseScan("https://traceroot.example/batch/7", here)).toEqual({ kind: "batch", id: "7" });
+    expect(parseScan(" #12 ", here)).toEqual({ kind: "batch", id: "12" });
+  });
+  it("flags batch links from another host instead of following them", () => {
+    expect(parseScan("http://localhost:3000/batch/3", here)).toEqual({ kind: "foreign", id: "3", host: "localhost:3000" });
+  });
+  it("rejects anything that isn't a batch", () => {
+    for (const bad of ["", "hello", "https://evil.example/login", "javascript:alert(1)", "https://traceroot.example/batch/0", "https://traceroot.example/batch/7/../admin", "x".repeat(400)]) {
+      expect(parseScan(bad, here).kind).toBe("invalid");
+    }
+  });
+});

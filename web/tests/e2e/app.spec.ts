@@ -93,3 +93,11 @@ test("landing sections appear when scrolled into view", async ({ page }) => {
   await how.scrollIntoViewIfNeeded();
   await expect.poll(() => how.evaluate((el) => getComputedStyle(el.parentElement!).opacity), { timeout: 3000 }).toBe("1");
 });
+
+test("a batch number that doesn't exist gets a clear message, not a raw error", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/batch/999", { waitUntil: "networkidle" });
+  await expect(page.getByText("Batch #999 does not exist")).toBeVisible();
+  await expect(page.getByText(/ContractFunction|eth_call/)).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+});

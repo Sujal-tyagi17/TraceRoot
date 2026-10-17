@@ -9,14 +9,14 @@ import type { Batch } from "@/lib/traceroot";
 import { RootLoader } from "./Loader";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-paper-300/80 bg-white p-6 shadow-lift ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-paper-300/80 bg-surface p-6 shadow-lift ${className}`}>{children}</div>;
 }
 
 export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "good" | "bad" | "warn" | "dark" }) {
   const t = {
     neutral: "bg-paper-200 text-slate-600",
     good: "bg-lime text-forest",
-    bad: "bg-alert-soft text-alert",
+    bad: "bg-danger-soft text-danger",
     warn: "bg-amber-soft text-amber",
     dark: "bg-forest text-lime",
   }[tone];
@@ -33,8 +33,8 @@ export function StatusPill({ b }: { b: Batch }) {
 
 export function Button({ children, variant = "primary", className = "", ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" }) {
   const v = {
-    primary: "bg-forest text-paper hover:bg-forest-700 active:translate-y-px",
-    ghost: "border border-paper-300 bg-white text-forest hover:bg-paper-200",
+    primary: "bg-primary text-on-primary hover:bg-primary-hover active:translate-y-px",
+    ghost: "border border-paper-300 bg-surface text-ink hover:bg-paper-200",
     danger: "bg-alert text-white hover:bg-[#a83226] active:translate-y-px",
   }[variant];
   return (
@@ -55,7 +55,7 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 }
 
 export const inputCls =
-  "w-full rounded-xl border border-paper-300 bg-paper/60 px-3.5 py-2.5 text-[15px] text-slate placeholder:text-slate-400 transition focus:border-forest-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-lime/60";
+  "w-full rounded-xl border border-paper-300 bg-paper/60 px-3.5 py-2.5 text-[15px] text-slate placeholder:text-slate-400 transition focus:border-forest-500 focus:bg-surface focus:outline-none focus:ring-4 focus:ring-lime/60";
 
 export function Spinner({ label = "Reading from the blockchain…" }: { label?: string }) {
   return (
@@ -68,21 +68,21 @@ export function Spinner({ label = "Reading from the blockchain…" }: { label?: 
 
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-paper-300 bg-white/40 px-6 py-10 text-center">
-      <p className="font-display text-lg font-[650] text-forest">{title}</p>
+    <div className="rounded-2xl border border-dashed border-paper-300 bg-surface/40 px-6 py-10 text-center">
+      <p className="font-display text-lg font-[650] text-ink">{title}</p>
       {children && <div className="mt-2 text-sm text-slate-600">{children}</div>}
     </div>
   );
 }
 
 export function ErrorBox({ message }: { message: string }) {
-  return <div className="rounded-lg bg-alert-soft px-4 py-3 text-sm text-alert">{message}</div>;
+  return <div role="alert" className="break-words rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger [overflow-wrap:anywhere]">{message}</div>;
 }
 
 export function NotConfigured() {
   return (
     <Card className="flex gap-4">
-      <PlugZap className="mt-1 shrink-0 text-forest" />
+      <PlugZap className="mt-1 shrink-0 text-ink" />
       <div className="text-sm text-slate-600">
         <p className="font-semibold text-slate">Contract not connected yet</p>
         <p className="mt-1">
@@ -106,7 +106,7 @@ export function TxStatus({ state }: { state: TxState }) {
   else if (state.phase === "confirmed")
     body = <p className="confirm-pop flex flex-wrap items-center gap-2 rounded-full bg-lime px-3 py-1 text-sm font-medium text-forest"><CheckCircle2 size={15} /> Confirmed on-chain <TxLink hash={state.hash} /></p>;
   else body = (
-    <div className={`rounded-xl px-4 py-3 text-sm ${state.kind === "rejected" || state.kind === "setup" ? "bg-paper-200 text-slate" : "bg-alert-soft text-alert"}`}>
+    <div className={`rounded-xl px-4 py-3 text-sm ${state.kind === "rejected" || state.kind === "setup" ? "bg-paper-200 text-slate" : "bg-danger-soft text-danger"}`}>
       <p className="font-semibold">{ERROR_TITLE[state.kind]}</p>
       <p className="mt-0.5">{state.message}</p>
       {state.hash && <p className="mt-1"><TxLink hash={state.hash} /></p>}
@@ -125,7 +125,7 @@ export function TxLink({ hash }: { hash: string }) {
 export function PageHeader({ title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
   return (
     <header className="mb-10">
-      <h1 className="font-display text-4xl font-[750] leading-[1.02] tracking-[-0.035em] text-forest md:text-5xl">{title}</h1>
+      <h1 className="font-display text-4xl font-[750] leading-[1.02] tracking-[-0.035em] text-ink md:text-5xl">{title}</h1>
       {children && <div className="mt-3 max-w-xl text-[17px] text-slate-600">{children}</div>}
     </header>
   );
