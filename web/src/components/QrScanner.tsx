@@ -51,6 +51,8 @@ function ScannerDialog({ onClose: onCloseProp }: { onClose: () => void }) {
   const handled = useRef(false);
   const stopped = useRef(false);
   const [phase, setPhase] = useState<Phase>({ s: "starting" });
+  const phaseRef = useRef(phase);
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
   const [notice, setNotice] = useState<string>();
   const [manual, setManual] = useState("");
 
@@ -68,16 +70,19 @@ function ScannerDialog({ onClose: onCloseProp }: { onClose: () => void }) {
   /** Checks the batch exists on-chain, then opens it. */
   const openBatch = useCallback(async (id: string) => {
     if (!isConfigured) { setNotice("This site isn't connected to a contract yet, so batches can't be looked up."); return false; }
+    // Whatever was showing before (camera, or the "camera blocked" message) comes back if the check fails.
+    const before: Phase = phaseRef.current.s === "checking" ? { s: "scanning" } : phaseRef.current;
     setPhase({ s: "checking", id });
     try {
       const n = await batchCount();
-      if (Number(id) > n) { setNotice(n ? `There's no batch #${id} yet. The newest is #${n}.` : "No batches have been created yet."); return false; }
+      if (Number(id) > n) { setNotice(n ? `There's no batch #${id} yet. The newest is #${n}.` : "No batches have been created yet."); setPhase(before); return false; }
       stop();
       router.push(`/batch/${id}`);
       onClose();
       return true;
     } catch {
       setNotice("Couldn't reach the blockchain. Check your connection and try again.");
+      setPhase(before);
       return false;
     }
   }, [router, stop, onClose]);

@@ -20,9 +20,16 @@ _Last updated 18 Oct 2026_
 - Wallet write path: created batch #7 from the dashboard form and waited for confirmation; an invalid split (30 + 30 ≠ 75) surfaced "Split quantities must add up exactly to the batch quantity."
 - Full journey through the website with one wallet per role (18 Oct 2026, `web/tests/e2e/workflow.spec.ts`): create → offer → accept → split 40 + 60 → transporter accepts, logs a reading, offers to retailer → retailer declines, then accepts → inspection → sale → recall of the origin → public pages show the inherited recall on the sold lot. Each step is checked against contract state over RPC.
 
+## Verified on the live site (18 Oct 2026, Sepolia + Vercel)
+
+- Contract `0x0B90219475dDa20b61FD59E68d2110397BEb3831` deployed and verified on Etherscan (exact match).
+- Through https://traceroot-chain.vercel.app with three MetaMask accounts: granted roles; created #1 (100 kg); offered and accepted a handoff; split into #2 (40 kg) and #3 (60 kg); handed #2 to the retailer, who sold it; inspected #3; recalled #1. Every step showed "Confirmed on-chain" with a Sepolia Etherscan link.
+- A private window with no wallet showed the inherited recall on #2 (sold) and #3.
+- iPhone, Safari, HTTPS: the scanner asked for the camera only when opened, used the rear camera, rejected a non-TraceRoot QR code, explained a batch number that doesn't exist (#99), and opened #2 and #3 with the recall banner.
+- Found on the phone and fixed: after a failed lookup the scanner stayed on "Checking batch…"; it now returns to the camera (or the blocked-camera message). Covered by a browser test.
+- Not yet checked: the camera light going off after closing the scanner, the blocked-camera path on a real phone, and Android Chrome.
+
 ## Next manual steps (owner)
 
-1. Create a test-only MetaMask wallet and fund it from an Amoy faucet.
-2. Put its private key in `contracts/.env` and run `npm run deploy:amoy`.
-3. Import `web/` into Vercel with the two `NEXT_PUBLIC_*` variables.
-4. On the deployed HTTPS site, test QR scanning with a real phone (Android Chrome and iOS Safari).
+1. Finish the phone checks above, and try Android Chrome.
+2. Ask MetaMask support to review the "Continue at your own risk" warning as a false positive.

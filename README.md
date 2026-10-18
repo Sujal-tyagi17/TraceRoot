@@ -13,6 +13,20 @@ TraceRoot is a blockchain supply chain provenance platform. It records every bat
 | Deployment | [transaction](https://sepolia.etherscan.io/tx/0x6651fca1c0a6d1db659dd0d16a84180b84fe8d6335a36b15a7e7ba1754f110cf), block 11,940,207, 18 Oct 2026 |
 | Network | Ethereum Sepolia (chain 11155111). Polygon Amoy and a local chain are also supported |
 
+### Live on Sepolia
+
+Real screenshots of the deployed site after a full journey on the testnet: batch #1 (100 kg) was split into #2 (40 kg, later sold) and #3 (60 kg, inspected), then #1 was recalled.
+
+| Explorer, read straight from the contract | A sold lot that inherited the recall |
+|---|---|
+| ![Live explorer on Sepolia](docs/screenshots/live-explorer.png) | ![Batch 2 under inherited recall](docs/screenshots/live-batch-recall.png) |
+
+| On an iPhone (Safari, HTTPS) | In-site scanner rejecting a non-TraceRoot QR |
+|---|---|
+| ![Recall page on a phone](docs/screenshots/phone-recall.png) | ![Scanner rejecting a Wikipedia QR code](docs/screenshots/phone-scanner.jpg) |
+
+### Local development
+
 | Light | Dark |
 |---|---|
 | ![TraceRoot home page, light theme](docs/screenshots/home.png) | ![TraceRoot home page, dark theme](docs/screenshots/home-dark.png) |
@@ -142,7 +156,8 @@ The test suite includes a randomized split/merge invariant test showing total ac
 - **Deployed on Sepolia, not Amoy.** Amoy faucets now require a mainnet balance, so the live demo runs on Sepolia; the code supports both.
 - **Single administrator key.** Fine for a demo; production would use a multisig.
 - **No indexer.** List pages read up to 500 batches through the RPC. Beyond a few hundred batches a free indexer (for example a subgraph) would be faster.
-- **Camera scanning needs HTTPS** and has only been tested with a simulated camera in Chromium. Real phones should be checked once the site is deployed.
+- **Camera scanning needs HTTPS.** Tested on an iPhone (Safari) against the live site; Android Chrome is still untested.
+- **MetaMask may warn about the site** ("Continue at your own risk"). New `*.vercel.app` sites that connect wallets are often flagged automatically; a false-positive review has to be requested from MetaMask support. The contract is verified and the code is open source.
 - **Browser tests run locally only** (they need a seeded chain); CI runs the contract tests, type check, lint, unit tests and the build.
 - **Dependency advisories** sit inside wallet libraries this site doesn't use (WalletConnect, MetaMask SDK) and Next's build-time PostCSS. Fixing them needs major upgrades; they are tracked in `docs/SECURITY.md`.
 

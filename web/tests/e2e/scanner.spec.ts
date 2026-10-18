@@ -70,6 +70,12 @@ test("camera permission denied: falls back to typing the batch number", async ({
     await page.getByRole("button", { name: "Scan a QR code" }).click();
     const dialog = page.getByRole("dialog", { name: "Scan a product label" });
     await expect(dialog.getByRole("alert")).toContainText(/blocked|couldn't start/, { timeout: 15_000 });
+    // A number that doesn't exist explains itself, and the blocked-camera message comes back (not a stuck "Checking…").
+    await dialog.getByLabel("Batch number").fill("999");
+    await dialog.getByRole("button", { name: "Open", exact: true }).click();
+    await expect(dialog.getByText("There's no batch #999 yet")).toBeVisible();
+    await expect(dialog.getByText(/Checking batch/)).toHaveCount(0);
+    await expect(dialog.getByRole("alert")).toContainText(/blocked|couldn't start/);
     await dialog.getByLabel("Batch number").fill("1");
     await dialog.getByRole("button", { name: "Open", exact: true }).click();
     await expect(page).toHaveURL(/\/batch\/1$/);
