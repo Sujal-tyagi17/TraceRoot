@@ -1,0 +1,10 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contract": "TraceRoot",
+  "address": "0x0B90219475dDa20b61FD59E68d2110397BEb3831",
+  "admin": "0xC6E7a8C64132791932d4062D905f44edc04b9F67",
+  "deployTx": "0x6651fca1c0a6d1db659dd0d16a84180b84fe8d6335a36b15a7e7ba1754f110cf",
+  "blockNumber": 11940207,
+  "deployedAt": "2026-10-18T09:33:57.189Z"
+}
