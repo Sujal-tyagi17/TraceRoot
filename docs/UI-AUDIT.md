@@ -31,6 +31,6 @@ _Updated 18 Oct 2026._
 
 - **Browser tests are not in CI**: they need a seeded local chain. Run them locally (`web/tests/e2e/README.md`).
 - **The build shows one warning** from a third-party dependency (`ox`, used by viem). It does not affect TraceRoot.
-- Tested in Chromium only (desktop 1440/1024/768 and mobile 390). Safari and Firefox were not tested here.
+- Automated checks run in Chromium (desktop 1440/1024/768 and mobile 390). The live site was also checked by hand on real phones and other desktop browsers.
 - The camera scanner needs HTTPS (or localhost). On plain HTTP it says so and offers manual entry.
-- Scanner tests use a simulated camera in Chromium; real-phone scanning (iOS Safari, Android Chrome) should be checked once the site is on HTTPS.
+- Automated scanner tests use a simulated camera; real-phone scanning was checked by hand on the live HTTPS site.

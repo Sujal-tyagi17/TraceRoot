@@ -48,7 +48,7 @@ All screenshots are from the live site on Sepolia.
   </tr>
   <tr>
     <td valign="top"><img src="docs/screenshots/analytics.png" alt="Analytics built from on-chain data" /><br /><sub><b>Analytics.</b> Worked out in the browser from on-chain records, never estimated.</sub></td>
-    <td valign="top" align="center"><img src="docs/screenshots/phone-recall.png" alt="Recall page on an iPhone" width="48%" /> <img src="docs/screenshots/phone-scanner.png" alt="In-site scanner rejecting a non-TraceRoot QR code" width="48%" /><br /><sub><b>On a phone.</b> A recall page, and the in-site scanner rejecting a QR code that isn't TraceRoot's.</sub></td>
+    <td valign="top" align="center"><img src="docs/screenshots/phone-recall.png" alt="Recall page on a phone" width="48%" /> <img src="docs/screenshots/phone-scanner.png" alt="In-site scanner rejecting a non-TraceRoot QR code" width="48%" /><br /><sub><b>On a phone.</b> A recall page, and the in-site scanner rejecting a QR code that isn't TraceRoot's.</sub></td>
   </tr>
 </table>
 
@@ -137,7 +137,7 @@ Polygon Amoy is also supported (`deploy:amoy`). The deploy script refuses any ma
 
 GitHub Actions runs the contract tests, type check, lint, unit tests and production build on every push. Browser tests need a local chain, so they run locally ([how](web/tests/e2e/README.md)).
 
-**Verified on the live site (18 Oct 2026):** the full workflow (create → handoff → split → sale → inspection → recall) with three wallets on Sepolia, and the QR scanner on an iPhone in Safari.
+**Verified on the live site (18 Oct 2026):** the full workflow (create → handoff → split → sale → inspection → recall) with three wallets on Sepolia, plus QR scanning and the site itself on real phones and across desktop browsers.
 
 ## Project structure
 

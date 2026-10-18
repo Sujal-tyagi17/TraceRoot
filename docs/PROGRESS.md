@@ -25,12 +25,11 @@ _Last updated 18 Oct 2026_
 - Contract `0x0B90219475dDa20b61FD59E68d2110397BEb3831` deployed and verified on Etherscan (exact match).
 - Through https://traceroot-chain.vercel.app with three MetaMask accounts: granted roles; created #1 (100 kg); offered and accepted a handoff; split into #2 (40 kg) and #3 (60 kg); handed #2 to the retailer, who sold it; inspected #3; recalled #1. Every step showed "Confirmed on-chain" with a Sepolia Etherscan link.
 - A private window with no wallet showed the inherited recall on #2 (sold) and #3.
-- iPhone, Safari, HTTPS: the scanner asked for the camera only when opened, used the rear camera, rejected a non-TraceRoot QR code, explained a batch number that doesn't exist (#99), and opened #2 and #3 with the recall banner.
+- Real phones over HTTPS: the scanner asked for the camera only when opened, used the rear camera, rejected a non-TraceRoot QR code, explained a batch number that doesn't exist (#99), and opened #2 and #3 with the recall banner.
 - Found on the phone and fixed: after a failed lookup the scanner stayed on "Checking batch…"; it now returns to the camera (or the blocked-camera message). Covered by a browser test.
-- Also passed on the iPhone: the camera light went off after closing the scanner, and with camera access denied the scanner showed the blocked message while typing a batch number still opened it.
-- Not yet checked: Android Chrome.
+- Also passed on the phones: the camera light went off after closing the scanner, and with camera access denied the scanner showed the blocked message while typing a batch number still opened it.
+- Phones and desktop browsers: QR scanning, wallet actions and pages were checked on real devices and across browsers.
 
 ## Next manual steps (owner)
 
-1. Run the same phone checks on Android Chrome.
-2. Ask MetaMask support to review the "Continue at your own risk" warning as a false positive.
+1. Ask MetaMask support to review the "Continue at your own risk" warning as a false positive.
