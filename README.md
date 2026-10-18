@@ -34,8 +34,6 @@
 
 TraceRoot is a blockchain supply-chain provenance platform. Every batch of a product is recorded from its origin to the shelf: who produced it, every handoff, every split and merge, inspections, declared prices and recalls. Anyone can scan the QR code on a label and see the full story, with no wallet or account.
 
-It runs on the public Sepolia testnet using free tools only. No real money is involved.
-
 <p align="center">
   <img src="docs/screenshots/live-batch-recall.png" alt="A sold batch showing an inherited recall on the live site" width="100%" />
 </p>
