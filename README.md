@@ -4,13 +4,14 @@
 
 TraceRoot is a blockchain supply chain provenance platform. It records every batch of a product from its origin to the consumer: who produced it, every handoff (signed by both sides), every split and merge (with quantities that must add up), inspections, declared prices and recalls. Anyone can scan a QR code and see the full story without a wallet.
 
-> Runs on a public **testnet** with free tools only. No real money is involved.
+> Runs on the public **Sepolia testnet** with free tools only. No real money is involved.
 
 | | |
 |---|---|
-| Live site | Not deployed yet. See [Deploy for free](#deploy-for-free-testnet) |
-| Contract | Not deployed to a testnet yet. Everything below runs on a local Hardhat chain |
-| Network | Polygon Amoy (chain 80002) by default, configurable to Sepolia or a local chain |
+| Live site | [traceroot-chain.vercel.app](https://traceroot-chain.vercel.app) (Vercel, free tier) |
+| Contract | [`0x0B90219475dDa20b61FD59E68d2110397BEb3831`](https://sepolia.etherscan.io/address/0x0B90219475dDa20b61FD59E68d2110397BEb3831#code), source verified on Etherscan |
+| Deployment | [transaction](https://sepolia.etherscan.io/tx/0x6651fca1c0a6d1db659dd0d16a84180b84fe8d6335a36b15a7e7ba1754f110cf), block 11,940,207, 18 Oct 2026 |
+| Network | Ethereum Sepolia (chain 11155111). Polygon Amoy and a local chain are also supported |
 
 | Light | Dark |
 |---|---|
@@ -105,19 +106,21 @@ To act as a participant locally, import one of Hardhat's printed test private ke
 
 ## Deploy for free (testnet)
 
+The live demo was deployed to Sepolia this way. Replace `sepolia` with `amoy` to use Polygon Amoy instead (Amoy faucets currently ask for a mainnet balance).
+
 1. **Make a dedicated test wallet** in MetaMask. Never use a wallet that holds real funds.
-2. **Get free test POL** for Polygon Amoy from a faucet (for example the official Polygon faucet or a provider faucet).
-3. **Configure**: copy `contracts/.env.example` to `contracts/.env` and paste the test wallet's private key. `.env` is git-ignored.
+2. **Get free test ETH** for Sepolia, for example from the Google Cloud Web3 faucet, QuickNode or Chainlink. About 0.05 ETH is plenty.
+3. **Configure**: copy `contracts/.env.example` to `contracts/.env` and fill in `DEPLOYER_PRIVATE_KEY`, `SEPOLIA_RPC_URL` (for example `https://ethereum-sepolia-rpc.publicnode.com`) and a free `ETHERSCAN_API_KEY`. `.env` is git-ignored.
 4. **Deploy**:
    ```bash
    cd contracts
-   npm run deploy:amoy
+   npm run deploy:sepolia
    ```
-   This writes `deployments/amoy.json` (address, tx hash, block) and copies the ABI into the web app.
-5. **Verify source** (optional, free API key): `npx hardhat verify --network amoy <address> <adminAddress>`
+   This writes `deployments/sepolia.json` (address, tx hash, block) and a copy for the web app. Commit both; they contain only public data.
+5. **Verify source**: `npx hardhat verify --network sepolia <address> <adminAddress>`
 6. **Grant roles** to participant wallets from the site's *Dashboard → Admin* tab, or:
-   `ROLE=PRODUCER ACCOUNT=0x... npx hardhat run scripts/grant-roles.js --network amoy`
-7. **Host the site on Vercel** (free): import the GitHub repo, set *Root Directory* to `web`, and add the environment variables `NEXT_PUBLIC_CHAIN=amoy` and `NEXT_PUBLIC_CONTRACT_ADDRESS=<address>`.
+   `ROLE=PRODUCER ACCOUNT=0x... npx hardhat run scripts/grant-roles.js --network sepolia`
+7. **Host the site on Vercel** (free): import the GitHub repo, set *Root Directory* to `web`, and add `NEXT_PUBLIC_CHAIN=sepolia`, `NEXT_PUBLIC_CONTRACT_ADDRESS=<address>` and optionally `NEXT_PUBLIC_RPC_URL`. These are baked in at build time, so redeploy after changing them.
 
 The deploy script refuses to run on any chain except Amoy, Sepolia and local Hardhat. There is no mainnet configuration.
 
@@ -136,7 +139,7 @@ The test suite includes a randomized split/merge invariant test showing total ac
 
 ## Known issues and next steps
 
-- **Not deployed yet.** Deploying to Amoy needs a test wallet with faucet funds, and hosting needs a Vercel account. Both are manual steps (above).
+- **Deployed on Sepolia, not Amoy.** Amoy faucets now require a mainnet balance, so the live demo runs on Sepolia; the code supports both.
 - **Single administrator key.** Fine for a demo; production would use a multisig.
 - **No indexer.** List pages read up to 500 batches through the RPC. Beyond a few hundred batches a free indexer (for example a subgraph) would be faster.
 - **Camera scanning needs HTTPS** and has only been tested with a simulated camera in Chromium. Real phones should be checked once the site is deployed.

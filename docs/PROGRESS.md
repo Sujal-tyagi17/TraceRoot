@@ -8,10 +8,10 @@ _Last updated 18 Oct 2026_
 | 1 · Frontend foundation (all routes, branding, responsive) | ✅ Done | `npm run build` passes, 16 routes; screenshots in docs/screenshots |
 | 2 · Smart contract | ✅ Done | contracts/contracts/TraceRoot.sol |
 | 3 · Tests & security | ✅ Done | 51 tests passing, 100% line coverage, Slither triaged (earlier run) |
-| 4 · Public testnet deployment | ⏳ Waiting on owner | Needs a funded test wallet (manual step, see README) |
+| 4 · Public testnet deployment | ✅ Done | Sepolia `0x0B90219475dDa20b61FD59E68d2110397BEb3831`, verified on Etherscan (exact match), tx `0x6651fca1c0…`, block 11,940,207 |
 | 5 · Real Web3 frontend | ✅ Done locally | Batch created and confirmed through the UI against a local chain; contract errors shown in plain language |
 | 6 · IPFS upload & DB indexer | ◐ Partial | CIDs supported; per-batch history works without an indexer; browser upload and Supabase indexer not built |
-| 7+ · Hosting | ⏳ Waiting on owner | Vercel import (free), after Phase 4 |
+| 7+ · Hosting | ✅ Done | https://traceroot-chain.vercel.app (Vercel Hobby, `NEXT_PUBLIC_CHAIN=sepolia`) |
 
 ## Verified locally (Hardhat chain 31337)
 
