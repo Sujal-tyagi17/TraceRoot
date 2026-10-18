@@ -46,3 +46,17 @@ test.describe("reduced motion", () => {
     expect(opacity).toBe("1");
   });
 });
+
+test("on a short phone screen nothing in the intro overlaps", async ({ browser }) => {
+  // e.g. a small iPhone with Safari's toolbars showing
+  const page = await (await browser.newContext({ viewport: { width: 375, height: 553 }, isMobile: true, hasTouch: true })).newPage();
+  await page.goto("/");
+  const dialog = curtain(page);
+  await expect(dialog).toBeVisible();
+  const tagline = dialog.getByText("Every product has a story.", { exact: true });
+  const skipBtn = dialog.getByRole("button", { name: "Skip intro" });
+  const [t, s] = [(await tagline.boundingBox())!, (await skipBtn.boundingBox())!];
+  expect(t.y + t.height).toBeLessThanOrEqual(s.y);
+  expect(s.y + s.height).toBeLessThanOrEqual(553);
+  await page.context().close();
+});

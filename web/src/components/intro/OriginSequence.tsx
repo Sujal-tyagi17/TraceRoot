@@ -189,26 +189,30 @@ export function OriginSequence() {
 
   return (
     <div
-      className={`intro-curtain fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-forest px-5 ${skipping ? "skip" : ""}`}
+      className={`intro-curtain fixed inset-0 z-[100] flex flex-col overflow-hidden bg-forest px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] ${skipping ? "skip" : ""}`}
       onAnimationStart={(e) => { if (e.target === e.currentTarget && e.animationName.startsWith("intro-lift")) announceLift(); }}
       onAnimationEnd={(e) => { if (e.target === e.currentTarget && e.animationName.startsWith("intro-lift")) finish(); }}
       onClick={skip}
       role="dialog" aria-modal="true" aria-label="TraceRoot opening animation"
     >
       <p className="sr-only">An illustrated journey of one product from its origin farm to two shops, with a batch split and a verification pass. Press Escape to skip.</p>
-      <div className="w-full max-w-[1000px]">
-        <div className="hidden md:block"><Network L={H} compact={false} /></div>
-        <div className="mx-auto max-w-[380px] md:hidden"><Network L={V} compact /></div>
+      {/* Content takes the space left above the footer row; on short phones the diagram shrinks to fit instead of running under it. */}
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+        <div className="hidden w-full max-w-[1000px] md:block"><Network L={H} compact={false} /></div>
+        <div className="flex min-h-0 w-full max-w-[380px] flex-1 items-center justify-center md:hidden [&_svg]:h-full [&_svg]:max-h-[560px]"><Network L={V} compact /></div>
+        <p className="mt-2 shrink-0 font-display text-5xl font-[750] tracking-[-0.04em] text-cream md:text-6xl" aria-hidden>
+          {NAME.split("").map((c, i) => <span key={i} className="i-rise" style={{ ["--at" as string]: `${0.5 + i * 0.05}s` }}>{c}</span>)}
+        </p>
+        <p className="i-rise mt-2 shrink-0 text-sm text-lime/85 md:text-base" style={{ ["--at" as string]: "1.15s" }} aria-hidden>Every product has a story.</p>
       </div>
-      <p className="mt-2 font-display text-5xl font-[750] tracking-[-0.04em] text-cream md:text-6xl" aria-hidden>
-        {NAME.split("").map((c, i) => <span key={i} className="i-rise" style={{ ["--at" as string]: `${0.5 + i * 0.05}s` }}>{c}</span>)}
-      </p>
-      <p className="i-rise mt-2 text-sm text-lime/85 md:text-base" style={{ ["--at" as string]: "1.15s" }} aria-hidden>Every product has a story.</p>
-      <p className="i-fade absolute bottom-7 left-5 max-w-[50%] text-xs text-cream/50 md:left-6" style={{ ["--at" as string]: "1.9s" }} aria-hidden><span className="md:hidden">Illustration, not live data.</span><span className="hidden md:inline">An illustrated journey, not live blockchain data.</span></p>
-      <button type="button" onClick={(e) => { e.stopPropagation(); skip(); }} autoFocus
-        className="absolute bottom-5 right-5 rounded-full border border-paper/25 px-4 py-2 text-sm font-medium text-cream/85 transition hover:bg-paper/10 focus-visible:outline-lime">
-        Skip intro
-      </button>
+      {/* Footer row in normal flow, so the caption and Skip button can never sit on top of the content. */}
+      <div className="flex shrink-0 items-center justify-between gap-4 pt-4">
+        <p className="i-fade min-w-0 text-xs text-cream/50" style={{ ["--at" as string]: "1.9s" }} aria-hidden><span className="md:hidden">Illustration, not live data.</span><span className="hidden md:inline">An illustrated journey, not live blockchain data.</span></p>
+        <button type="button" onClick={(e) => { e.stopPropagation(); skip(); }} autoFocus
+          className="shrink-0 rounded-full border border-paper/25 px-4 py-2 text-sm font-medium text-cream/85 transition hover:bg-paper/10 focus-visible:outline-lime">
+          Skip intro
+        </button>
+      </div>
     </div>
   );
 }
