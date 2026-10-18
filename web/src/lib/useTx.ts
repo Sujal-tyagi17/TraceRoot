@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useSwitchChain, useWriteContract } from "wagmi";
 import { BaseError, ContractFunctionRevertedError, InsufficientFundsError, type Hex } from "viem";
 import { abi, publicClient } from "./traceroot";
 import { chain, contractAddress } from "./config";
@@ -74,12 +74,22 @@ export function explain(e: unknown): string {
 export function useTx(onConfirmed?: (hash: Hex) => void) {
   const { address, chainId } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { switchChainAsync } = useSwitchChain();
   const [state, setState] = useState<TxState>({ phase: "idle" });
 
   async function send(functionName: string, args: unknown[]) {
     if (!contractAddress) return setState({ phase: "error", kind: "setup", message: "This site isn't connected to a contract yet." });
     if (!address) return setState({ phase: "error", kind: "setup", message: "Connect your wallet first." });
-    if (chainId !== chain.id) return setState({ phase: "error", kind: "setup", message: `Switch your wallet to ${chain.name}, then try again.` });
+    if (chainId !== chain.id) {
+      // MetaMask remembers a network per site and account, so a newly connected account often starts
+      // on another chain. Ask the wallet to switch first instead of stopping the user.
+      try {
+        setState({ phase: "signing" });
+        await switchChainAsync({ chainId: chain.id });
+      } catch (e) {
+        return setState({ phase: "error", kind: classify(e) === "rejected" ? "rejected" : "setup", message: `Switch your wallet to ${chain.name}, then try again.` });
+      }
+    }
     let hash: Hex | undefined;
     try {
       setState({ phase: "signing" });

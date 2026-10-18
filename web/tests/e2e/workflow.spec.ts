@@ -278,3 +278,20 @@ test("13. if the receipt can't be read after sending, the site says so instead o
   expect(await read<bigint>("batchCount")).toBe(before + 1n); // it really was sent, exactly once
   await page.context().close();
 });
+
+test("14. a wallet that connected on another network is switched automatically when sending", async ({ page }) => {
+  await injectWallet(page, ACCOUNTS.producer, "0x1"); // MetaMask often connects a new account on Ethereum mainnet
+  await page.goto("/dashboard/batches");
+  await connect(page);
+  await expect(page.getByRole("button", { name: /Switch to Hardhat/ }).first()).toBeVisible();
+  const before = await read<bigint>("batchCount");
+  const f = form(page, "Create a batch");
+  await f.getByLabel("Product").fill("E2E ginger");
+  await f.getByLabel("Quantity").fill("3");
+  await f.getByLabel("Origin").fill("Wayanad, Kerala");
+  await f.getByLabel("Produced / harvested on").fill("2026-10-02");
+  await f.getByRole("button", { name: "Create batch" }).click();
+  await confirmed(f);
+  expect(await read<bigint>("batchCount")).toBe(before + 1n);
+  await expect(page.getByRole("button", { name: /Switch to Hardhat/ })).toHaveCount(0);
+});

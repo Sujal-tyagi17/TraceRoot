@@ -14,6 +14,8 @@ export const ACCOUNTS = {
 /** Injects a minimal EIP-1193 wallet that forwards to the local node, where accounts are unlocked. */
 export async function injectWallet(page: Page, account: string, chainIdHex = "0x7a69") {
   await page.addInitScript(([acct, chainHex]) => {
+    let chain = chainHex;
+    const listeners: Record<string, ((x: unknown) => void)[]> = {};
     const rpc = async (method: string, params: unknown[] = []) => {
       const r = await fetch("http://127.0.0.1:8545", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
       const j = await r.json();
@@ -24,11 +26,18 @@ export async function injectWallet(page: Page, account: string, chainIdHex = "0x
       isMetaMask: true,
       request: async ({ method, params }: { method: string; params?: unknown[] }) => {
         if (method === "eth_requestAccounts" || method === "eth_accounts") return [acct];
-        if (method === "eth_chainId") return chainHex;
+        if (method === "eth_chainId") return chain;
+        if (method === "wallet_switchEthereumChain") {
+          // Behaves like MetaMask: switch, then tell the page.
+          chain = (params?.[0] as { chainId: string }).chainId;
+          (listeners.chainChanged ?? []).forEach((f) => f(chain));
+          return null;
+        }
         if (method.startsWith("wallet_")) return null;
         return rpc(method, params);
       },
-      on: () => {}, removeListener: () => {},
+      on: (ev: string, f: (x: unknown) => void) => { (listeners[ev] ??= []).push(f); },
+      removeListener: (ev: string, f: (x: unknown) => void) => { listeners[ev] = (listeners[ev] ?? []).filter((g) => g !== f); },
     };
   }, [account, chainIdHex] as const);
 }
