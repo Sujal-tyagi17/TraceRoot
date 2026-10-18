@@ -35,14 +35,20 @@
 TraceRoot is a blockchain supply-chain provenance platform. Every batch of a product is recorded from its origin to the shelf: who produced it, every handoff, every split and merge, inspections, declared prices and recalls. Anyone can scan the QR code on a label and see the full story, with no wallet or account.
 
 <p align="center">
-  <img src="docs/screenshots/live-batch-recall.png" alt="A sold batch showing an inherited recall on the live site" width="100%" />
+  <img src="docs/screenshots/home.png" alt="TraceRoot home page" width="100%" />
 </p>
 
-<p align="center">
-  <img src="docs/screenshots/phone-recall.png" alt="Recall page on an iPhone" width="240" />
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/phone-scanner.jpg" alt="In-site QR scanner rejecting a non-TraceRoot code" width="240" />
-</p>
+## Screenshots
+
+All screenshots are from the live site on Sepolia.
+
+| Dashboard | Explorer |
+|---|---|
+| ![Role-aware dashboard](docs/screenshots/dashboard.png) | ![Every batch, read from the contract](docs/screenshots/explorer.png) |
+| **A sold batch under inherited recall** | **Quality records and journey** |
+| ![Batch page with recall banner](docs/screenshots/batch-recall.png) | ![Inspection and on-chain journey](docs/screenshots/batch-records.png) |
+| **Analytics** | **On a phone** |
+| ![Analytics from on-chain data](docs/screenshots/analytics.png) | <img src="docs/screenshots/phone-recall.png" alt="Recall page on an iPhone" width="48%" /> <img src="docs/screenshots/phone-scanner.png" alt="QR scanner rejecting a non-TraceRoot code" width="48%" /> |
 
 ## Features
 
