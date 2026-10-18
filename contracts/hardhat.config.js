@@ -18,6 +18,7 @@ module.exports = {
     sepolia: { url: SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com", chainId: 11155111, accounts },
   },
   etherscan: { apiKey: ETHERSCAN_API_KEY || "" },
-  sourcify: { enabled: true },
+  // Sourcify is off: hardhat-verify 2.x still calls its removed v1 API (404). Etherscan verification covers it.
+  sourcify: { enabled: false },
   gasReporter: { enabled: !!process.env.REPORT_GAS },
 };
