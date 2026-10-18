@@ -1,34 +1,37 @@
-<div align="center">
-
-<img src="web/src/app/icon.svg" alt="TraceRoot logo" width="84" />
+<img align="left" src="web/src/app/icon.svg" alt="TraceRoot logo" width="112" />
 
 # TraceRoot
 
 **Every product has a story. Trace every batch. Verify every handoff.**
 
-<!-- Tech stack -->
-![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?logo=solidity&logoColor=white)
-![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-5-4E5EE4?logo=openzeppelin&logoColor=white)
-![Hardhat](https://img.shields.io/badge/Hardhat-2-FFF100?logoColor=black)
-![Ethereum Sepolia](https://img.shields.io/badge/Ethereum-Sepolia-3C3C3D?logo=ethereum&logoColor=white)
-<br />
-![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
-![wagmi + viem](https://img.shields.io/badge/wagmi_+_viem-2-1C1C1C)
-![Recharts](https://img.shields.io/badge/Recharts-charts-22B5BF)
-<br />
-![Vitest](https://img.shields.io/badge/Vitest-unit_tests-6E9F18?logo=vitest&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-e2e_tests-2EAD33)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI-2088FF?logo=githubactions&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-hosting-000000?logo=vercel&logoColor=white)
+A blockchain supply-chain provenance platform with QR verification for anyone.
 
-[**Live demo**](https://traceroot-chain.vercel.app) ·
-[**Verified contract**](https://sepolia.etherscan.io/address/0x0B90219475dDa20b61FD59E68d2110397BEb3831#code) ·
-[**Architecture**](docs/ARCHITECTURE.md) ·
-[**Security notes**](docs/SECURITY.md)
+[Live demo](https://traceroot-chain.vercel.app) · [Verified contract](https://sepolia.etherscan.io/address/0x0B90219475dDa20b61FD59E68d2110397BEb3831#code) · [Architecture](docs/ARCHITECTURE.md) · [Security notes](docs/SECURITY.md)
 
-</div>
+<br clear="left" />
+
+## Tech stack
+
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=solidity,ts,nodejs,react,nextjs,tailwind,vitest,githubactions,vercel,git&theme=dark" alt="Solidity, TypeScript, Node.js, React, Next.js, Tailwind CSS, Vitest, GitHub Actions, Vercel, Git" />
+  </a>
+</p>
+
+![Ethereum Sepolia](https://img.shields.io/badge/Ethereum-Sepolia-3C3C3D?style=for-the-badge&logo=ethereum&logoColor=white)
+![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-5-4E5EE4?style=for-the-badge&logo=openzeppelin&logoColor=white)
+![Hardhat](https://img.shields.io/badge/Hardhat-2-F7E018?style=for-the-badge&labelColor=2B2B2B)
+![wagmi + viem](https://img.shields.io/badge/wagmi_%2B_viem-2-1C1C1C?style=for-the-badge&labelColor=2B2B2B)
+![Recharts](https://img.shields.io/badge/Recharts-charts-22B5BF?style=for-the-badge&labelColor=2B2B2B)
+![Playwright](https://img.shields.io/badge/Playwright-e2e-2EAD33?style=for-the-badge&labelColor=2B2B2B)
+
+| Layer | Tools |
+|---|---|
+| Smart contract | Solidity 0.8.24, OpenZeppelin 5 (AccessControl, Pausable), Hardhat 2 |
+| Network | Ethereum Sepolia testnet (Polygon Amoy and a local chain also supported) |
+| Website | Next.js 15, React, TypeScript 5, Tailwind CSS 3, wagmi 2 + viem, Recharts, @zxing/browser |
+| Testing and CI | Hardhat + Chai, Vitest, Playwright, GitHub Actions |
+| Hosting | Vercel (free tier) |
 
 ---
 
